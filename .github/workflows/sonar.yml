@@ -6,6 +6,7 @@ name: GitHub - Sonar Cloud Analysis
 run-name: Sonar Cloud Analysis - ${{ github.ref_name}}
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
