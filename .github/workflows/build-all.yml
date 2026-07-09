@@ -1,0 +1,36 @@
+# -----------------------------------------------------------------------------------------------
+# This workflow built the project on every pull request and on every manual trigger.
+# This workflow is used in pull request as a required check.
+# -----------------------------------------------------------------------------------------------
+name: GitHub - Build all
+run-name: Build all modules
+
+on:
+  workflow_dispatch:
+  merge_group:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
