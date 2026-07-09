@@ -1,25 +1,25 @@
 # azure-quiz-frontend
 
-Application Angular pour réviser les certifications Microsoft (AZ-900 pour commencer, AZ-104 ensuite) : révision par module ou
-examen blanc, accessible depuis un simple lien (pas de compte). Consomme l'API REST de
+Angular application to review Microsoft certifications (AZ-900 to start, AZ-104 next): review by
+module or mock exam, accessible from a simple link (no account). Consumes the REST API of
 [azure-quiz-backend](../azure-quiz-backend).
 
 ## Stack
 
 - Angular 22 (standalone components, signals), Angular Material, ngx-translate (fr/en)
-- Vitest (test runner natif Angular CLI 22)
-- ESLint (`angular-eslint`) + Prettier, husky + lint-staged en pre-commit
+- Vitest (Angular CLI 22 native test runner)
+- ESLint (`angular-eslint`) + Prettier, husky + lint-staged on pre-commit
 
-## Lancer en local
+## Run locally
 
-Prérequis : Node 22+, et le backend (`azure-quiz-backend`) démarré sur `http://localhost:8080`.
+Prerequisites: Node 22+, and the backend (`azure-quiz-backend`) running on `http://localhost:8080`.
 
 ```bash
 npm install
-npm start   # http://localhost:4200, cible l'API sur localhost:8080 (voir src/environments/environment.development.ts)
+npm start   # http://localhost:4200, targets the API on localhost:8080 (see src/environments/environment.development.ts)
 ```
 
-## Tests et qualité
+## Tests and quality
 
 ```bash
 npm test           # Vitest
@@ -28,32 +28,37 @@ npm run lint
 npm run format:check
 ```
 
-## Build de production
+## Production build
 
 ```bash
 npm run build:prod
 ```
 
-Sortie statique dans `dist/azure-quiz-frontend/browser` (c'est ce dossier qu'il faut pointer comme
-`output_location` lors du déploiement sur Azure Static Web Apps).
+Static output in `dist/azure-quiz-frontend/browser` (that's the folder to point to as
+`output_location` when deploying to Azure Static Web Apps).
 
-Avant de builder pour un déploiement réel, mettre à jour `src/environments/environment.ts` avec l'URL de l'API
-backend déployée (`apiBaseUrl`).
+Before building for a real deployment, update `src/environments/environment.ts` with the deployed
+backend API URL (`apiBaseUrl`).
 
-## Déploiement (Azure Static Web Apps)
+## Deployment (Azure Static Web Apps)
 
-- `public/staticwebapp.config.json` gère le fallback SPA (toutes les routes non-fichier redirigent vers
-  `index.html`) — il est copié tel quel dans le dossier de build (`public/` = racine de sortie).
-- Le workflow de déploiement CI/CD vers Azure Static Web Apps sera ajouté une fois l'infrastructure provisionnée.
+- `public/staticwebapp.config.json` handles the SPA fallback (all non-file routes redirect to
+  `index.html`) — it is copied as-is into the build output folder (`public/` = output root).
+- The CI/CD deployment workflow to Azure Static Web Apps will be added once the infrastructure is
+  provisioned.
 
 ## Structure
 
-- `src/app/core` — modèles, services (`QuizApiService` pour les appels REST, `QuizSessionStore` pour l'état de
-  session de quiz basé sur des signals)
-- `src/app/features` — pages : `certifications` (accueil), `modules` (modules d'une certification + démarrage
-  examen blanc), `quiz` (déroulé question par question), `results` (score final)
+- `src/app/core` — models, services (`QuizApiService` for REST calls, `QuizSessionStore` for
+  signal-based quiz session state)
+- `src/app/features` — pages: `certifications` (home), `modules` (a certification's modules +
+  starting a mock exam), `quiz` (question-by-question flow), `results` (final score)
 
-## Hors scope de ce repo
+## Out of scope for this repo
 
-- Provisioning de l'infrastructure Azure (Static Web App, App Service, base de données).
-- Workflow de déploiement CI/CD vers Azure.
+- Provisioning the Azure infrastructure (Static Web App, App Service, database).
+- CI/CD deployment workflow to Azure.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). License: see [LICENSE](LICENSE).

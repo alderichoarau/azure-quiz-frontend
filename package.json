@@ -1,6 +1,8 @@
 {
   "name": "azure-quiz-frontend",
   "version": "0.0.0",
+  "license": "UNLICENSED",
+  "author": "Alderic Hoarau",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
