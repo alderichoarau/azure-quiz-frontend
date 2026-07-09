@@ -4,6 +4,16 @@ Angular application to review Microsoft certifications (AZ-900 to start, AZ-104 
 module or mock exam, accessible from a simple link (no account). Consumes the REST API of
 [azure-quiz-backend](../azure-quiz-backend).
 
+## Last analysis
+[![GitHub - Build all](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml)
+[![GitHub - Sonar Cloud Analysis](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+
+
 ## Stack
 
 - Angular 22 (standalone components, signals), Angular Material, ngx-translate (fr/en)
