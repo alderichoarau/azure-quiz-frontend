@@ -1,0 +1,168 @@
+version: 2
+
+updates:
+  # Angular & npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Paris"
+    
+    # Group all updates into fewer PRs
+    groups:
+      # Angular core packages (major versions)
+      angular-core:
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@ngtools/*"
+          - "typescript"
+          - "zone.js"
+        update-types:
+          - "major"
+        
+      # Angular core packages (minor & patch)
+      angular-minor:
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@ngtools/*"
+          - "typescript"
+          - "zone.js"
+        update-types:
+          - "minor"
+          - "patch"
+          
+      # Angular Material & CDK
+      angular-material:
+        patterns:
+          - "@angular/material"
+          - "@angular/cdk"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+      
+      # Translation dependencies
+      translation:
+        patterns:
+          - "@ngx-translate/*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+      
+      # Development tools (ESLint, Prettier, etc.)
+      dev-tools:
+        patterns:
+          - "eslint*"
+          - "angular-eslint"
+          - "typescript-eslint"
+          - "prettier"
+          - "husky"
+          - "lint-staged"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+      
+      # Testing dependencies
+      testing:
+        patterns:
+          - "jasmine*"
+          - "karma*"
+          - "@types/jasmine"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+      
+      # All other dependencies (grouped)
+      other-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "@ngtools/*"
+          - "@angular/material"
+          - "@angular/cdk"
+          - "@ngx-translate/*"
+          - "eslint*"
+          - "angular-eslint"
+          - "typescript-eslint"
+          - "prettier"
+          - "husky"
+          - "lint-staged"
+          - "jasmine*"
+          - "karma*"
+          - "@types/jasmine"
+          - "typescript"
+          - "zone.js"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+    
+    # Configuration options
+    open-pull-requests-limit: 10
+    pull-request-branch-name:
+      separator: "/"
+    
+    # Commit message customization
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    
+    # PR settings
+    reviewers:
+      - "alderichoarau"  # Replace with your GitHub username if different
+    
+    # Labels for easier management
+    labels:
+      - "dependencies"
+      - "automated"
+    
+    # Allow both dev and prod dependencies
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    
+    # Ignore specific packages if needed
+    ignore:
+      # Ignore Node.js version (handled separately)
+      - dependency-name: "node"
+      # Ignore major Angular updates that need manual review
+      # - dependency-name: "@angular/*"
+      #   update-types: ["version-update:semver-major"]
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:30"
+      timezone: "Europe/Paris"
+    
+    # Group all GitHub Actions updates
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
+    
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    
+    labels:
+      - "github-actions"
+      - "ci/cd"
+      - "dependencies"
