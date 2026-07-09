@@ -1,0 +1,48 @@
+# -----------------------------------------------------------------------------------------------
+# GitHub Action to run SonarCloud analysis on the codebase.
+# Automated and required for pull requests (PRs).
+# -----------------------------------------------------------------------------------------------
+name: GitHub - Sonar Cloud Analysis
+run-name: Sonar Cloud Analysis - ${{ github.ref_name}}
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+env:
+  NODE_VERSION: 24
+
+jobs:
+  sonar-scan:
+    name: Sonar scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "Generate coverage report"
+        run: npm run test:coverage
+
+      - name: "SonarQube Scan"
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
