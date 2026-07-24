@@ -47,8 +47,7 @@ jobs:
         run: |
           NAME=$(az resource list \
             --resource-group "${{ secrets.AZURE_RG_NAME }}" \
-            --tag "component=quiz-backend" \
-            --query "[?type=='Microsoft.Web/sites' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            --query "[?type=='Microsoft.Web/sites' && tags.component=='quiz-backend' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
             -o tsv)
 
           if [ -z "$NAME" ]; then
@@ -62,8 +61,7 @@ jobs:
         run: |
           NAME=$(az resource list \
             --resource-group "${{ secrets.AZURE_RG_NAME }}" \
-            --tag "component=quiz-backend" \
-            --query "[?type=='Microsoft.KeyVault/vaults' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            --query "[?type=='Microsoft.KeyVault/vaults' && tags.component=='quiz-backend' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
             -o tsv)
 
           if [ -z "$NAME" ]; then
@@ -77,8 +75,7 @@ jobs:
         run: |
           NAME=$(az resource list \
             --resource-group "${{ secrets.AZURE_RG_NAME }}" \
-            --tag "component=quiz-frontend" \
-            --query "[?type=='Microsoft.Web/staticSites' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            --query "[?type=='Microsoft.Web/staticSites' && tags.component=='quiz-frontend' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
             -o tsv)
 
           if [ -z "$NAME" ]; then
