@@ -7,7 +7,7 @@
 # component tag matters because owner/environment alone would also match the Python TP's App
 # Service living in the same Resource Group.
 # -----------------------------------------------------------------------------------------------
-name: Deploy frontend
+name: AZ SWA - Deploy frontend application
 run-name: "Deploy frontend · ${{ inputs.environment }} · @${{ github.actor }}"
 
 on:

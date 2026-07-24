@@ -67,7 +67,6 @@ backend API URL (`apiBaseUrl`).
 ## Out of scope for this repo
 
 - Provisioning the Azure infrastructure (Static Web App, App Service, database).
-- CI/CD deployment workflow to Azure.
 
 ## Contributing
 
