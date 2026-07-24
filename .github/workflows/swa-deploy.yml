@@ -22,11 +22,8 @@ on:
           - prod
 
 permissions:
-  id-token: write # OIDC token for Azure login
+  id-token: write
   contents: read
-
-env:
-  NODE_VERSION: 24
 
 jobs:
   deploy:
@@ -103,8 +100,9 @@ jobs:
       - name: "Set up Node"
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: "Install dependencies"
         run: npm ci
