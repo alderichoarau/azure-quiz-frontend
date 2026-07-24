@@ -1,0 +1,143 @@
+# -----------------------------------------------------------------------------------------------
+# Deploys the built Angular app to the Static Web App provisioned by the azure-infra-terraform
+# repo.
+#
+# Nothing is hardcoded: the backend URL, the API key, and the Static Web App itself are all looked
+# up by tag (owner + environment + component) at deploy time, never baked into this repo. The
+# component tag matters because owner/environment alone would also match the Python TP's App
+# Service living in the same Resource Group.
+# -----------------------------------------------------------------------------------------------
+name: Deploy frontend
+run-name: "Deploy frontend · ${{ inputs.environment }} · @${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (matches the `environment` tag set by Terraform)"
+        required: true
+        type: choice
+        options:
+          - nonprod
+          - prod
+
+permissions:
+  id-token: write # OIDC token for Azure login
+  contents: read
+
+env:
+  NODE_VERSION: 24
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Azure Login (OIDC)"
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: "Find backend App Service by tag"
+        id: find-backend
+        run: |
+          NAME=$(az resource list \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --resource-type "Microsoft.Web/sites" \
+            --tag "component=quiz-backend" \
+            --query "[?tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            -o tsv)
+
+          if [ -z "$NAME" ]; then
+            echo "::error::No backend App Service found (owner=${{ secrets.AZURE_OWNER }}, environment=${{ inputs.environment }}, component=quiz-backend)."
+            exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: "Find Key Vault by tag"
+        id: find-kv
+        run: |
+          NAME=$(az resource list \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --resource-type "Microsoft.KeyVault/vaults" \
+            --tag "component=quiz-backend" \
+            --query "[?tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            -o tsv)
+
+          if [ -z "$NAME" ]; then
+            echo "::error::No Key Vault found (owner=${{ secrets.AZURE_OWNER }}, environment=${{ inputs.environment }}, component=quiz-backend)."
+            exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: "Find Static Web App by tag"
+        id: find-swa
+        run: |
+          NAME=$(az resource list \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --resource-type "Microsoft.Web/staticSites" \
+            --tag "component=quiz-frontend" \
+            --query "[?tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            -o tsv)
+
+          if [ -z "$NAME" ]; then
+            echo "::error::No Static Web App found (owner=${{ secrets.AZURE_OWNER }}, environment=${{ inputs.environment }}, component=quiz-frontend)."
+            exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: "Read backend API key from Key Vault"
+        id: read-key
+        run: |
+          KEY=$(az keyvault secret show \
+            --vault-name "${{ steps.find-kv.outputs.name }}" \
+            --name backend-api-key \
+            --query value -o tsv)
+          echo "::add-mask::$KEY"
+          echo "value=$KEY" >> "$GITHUB_OUTPUT"
+
+      - name: "Inject prod environment values"
+        run: |
+          API_BASE_URL="https://${{ steps.find-backend.outputs.name }}.azurewebsites.net/api"
+          sed -i "s#https://REPLACE_WITH_PROD_API_URL/api#${API_BASE_URL}#" src/environments/environment.ts
+          sed -i "s/__BACKEND_API_KEY__/${{ steps.read-key.outputs.value }}/" src/environments/environment.ts
+
+      - name: "Set up Node"
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "Build project"
+        run: npm run build
+
+      - name: "Get Static Web App deployment token"
+        id: swa-token
+        run: |
+          TOKEN=$(az staticwebapp secrets list \
+            --name "${{ steps.find-swa.outputs.name }}" \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --query "properties.apiKey" -o tsv)
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: "Deploy to Static Web App"
+        run: |
+          npx @azure/static-web-apps-cli deploy ./dist/azure-quiz-frontend/browser \
+            --deployment-token "${{ steps.swa-token.outputs.token }}" \
+            --env production
+
+      - name: "Job summary"
+        if: always()
+        run: |
+          echo "## Frontend deploy — ${{ inputs.environment }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Static Web App** : ${{ steps.find-swa.outputs.name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Backend URL** : https://${{ steps.find-backend.outputs.name }}.azurewebsites.net/api" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Actor** : @${{ github.actor }}" >> "$GITHUB_STEP_SUMMARY"
