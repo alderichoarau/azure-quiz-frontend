@@ -1,0 +1,34 @@
+# image.repository/tag and ingress.host are always passed via `--set` from
+# deploy-aks.yml, same reasoning as quiz-backend/helm/values.yaml.
+
+replicaCount: 1
+
+image:
+  repository: "" # <acr-login-server>/quiz-frontend, set by CI
+  tag: "" # git sha, set by CI
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80 # exposed by the k8s Service
+  containerPort: 8080 # nginx.conf listens here (non-root, see deployment.yaml)
+
+ingress:
+  enabled: true
+  className: webapprouting.kubernetes.azure.com
+  host: "" # <owner>-frontend.<ingress-ip>.nip.io, set by CI
+
+# No secretName here on purpose -- unlike quiz-backend, this image has no
+# runtime secrets: the API key is baked into the JS bundle at Docker build
+# time (Dockerfile ARG API_KEY), same constraint the Static Web App track
+# already has.
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+probes:
+  path: /healthz
+  port: 8080

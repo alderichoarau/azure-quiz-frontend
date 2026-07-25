@@ -1,0 +1,148 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Deploys the frontend to the mutualised AKS cluster (piste "AKS"). Separate
+# from swa-deploy.yml (Static Web Apps track) -- run one or the other, not
+# both against the same secrets.
+#
+# API_BASE_URL/API_KEY get baked into the JS bundle at Docker build time
+# (Dockerfile ARG), same constraint swa-deploy.yml already has with its own
+# sed-into-environment.ts step -- a backend URL/key change means a rebuild,
+# not just a new `helm upgrade`.
+# ─────────────────────────────────────────────────────────────────────────────
+name: AKS - Deploy frontend application
+run-name: "Deploy frontend (AKS) · ${{ inputs.environment }} · @${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (matches the `environment` tag set by Terraform)"
+        required: true
+        type: choice
+        options:
+          - nonprod
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_LOCATION: francecentral
+  SHARED_RG: rg-shared-prf2026
+  COHORT: prf2026
+  AKS_CLUSTER: aks-${{ inputs.environment }}-prf2026
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Azure Login (OIDC)"
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: "Find ACR by tag"
+        id: find-acr
+        run: |
+          NAME=$(az resource list \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --query "[?type=='Microsoft.ContainerRegistry/registries' && tags.component=='quiz-registry' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            -o tsv)
+          if [ -z "$NAME" ]; then
+            echo "::error::No ACR found."
+            exit 1
+          fi
+          LOGIN_SERVER=$(az acr show --name "$NAME" --query loginServer -o tsv)
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "login_server=$LOGIN_SERVER" >> "$GITHUB_OUTPUT"
+
+      - name: "Find Key Vault by tag"
+        id: find-kv
+        run: |
+          NAME=$(az resource list \
+            --resource-group "${{ secrets.AZURE_RG_NAME }}" \
+            --query "[?type=='Microsoft.KeyVault/vaults' && tags.component=='quiz-backend' && tags.owner=='${{ secrets.AZURE_OWNER }}' && tags.environment=='${{ inputs.environment }}'].name | [0]" \
+            -o tsv)
+          if [ -z "$NAME" ]; then
+            echo "::error::No Key Vault found."
+            exit 1
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: "Read backend API key from Key Vault"
+        id: read-key
+        run: |
+          KEY=$(az keyvault secret show \
+            --vault-name "${{ steps.find-kv.outputs.name }}" \
+            --name backend-api-key \
+            --query value -o tsv)
+          echo "::add-mask::$KEY"
+          echo "value=$KEY" >> "$GITHUB_OUTPUT"
+
+      - name: "Install kubectl + kubelogin"
+        run: az aks install-cli
+
+      - name: "Get AKS credentials"
+        run: |
+          az aks get-credentials \
+            --resource-group "$SHARED_RG" \
+            --name "$AKS_CLUSTER" \
+            --overwrite-existing
+          kubelogin convert-kubeconfig -l azurecli
+
+      - name: "Verify namespace exists"
+        run: |
+          if ! kubectl get namespace "${{ secrets.AZURE_OWNER }}" >/dev/null 2>&1; then
+            echo "::error::Namespace '${{ secrets.AZURE_OWNER }}' doesn't exist yet on $AKS_CLUSTER. Ask the trainer to run scripts/bootstrap-aks-namespace.sh (azure-infra-terraform) first."
+            exit 1
+          fi
+
+      - name: "Resolve ingress public IP"
+        id: ingress-ip
+        run: |
+          IP=""
+          for i in $(seq 1 30); do
+            IP=$(kubectl get svc -n app-routing-system -l app.kubernetes.io/name=nginx -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+            [ -n "$IP" ] && break
+            sleep 10
+          done
+          if [ -z "$IP" ]; then
+            echo "::error::Could not resolve the App Routing add-on's ingress IP after 5 minutes."
+            exit 1
+          fi
+          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+
+      - name: "ACR login"
+        run: az acr login --name ${{ steps.find-acr.outputs.name }}
+
+      - name: "Build & push image"
+        run: |
+          docker build \
+            --build-arg API_BASE_URL="https://${{ secrets.AZURE_OWNER }}-backend.${{ steps.ingress-ip.outputs.ip }}.nip.io/api" \
+            --build-arg API_KEY="${{ steps.read-key.outputs.value }}" \
+            -t ${{ steps.find-acr.outputs.login_server }}/quiz-frontend:${{ github.sha }} \
+            .
+          docker push ${{ steps.find-acr.outputs.login_server }}/quiz-frontend:${{ github.sha }}
+
+      - name: "Helm upgrade"
+        run: |
+          helm upgrade --install quiz-frontend ./helm \
+            --namespace "${{ secrets.AZURE_OWNER }}" \
+            --set image.repository="${{ steps.find-acr.outputs.login_server }}/quiz-frontend" \
+            --set image.tag="${{ github.sha }}" \
+            --set ingress.host="${{ secrets.AZURE_OWNER }}-frontend.${{ steps.ingress-ip.outputs.ip }}.nip.io" \
+            --wait --timeout 5m
+
+      - name: "Job summary"
+        if: always()
+        run: |
+          echo "## Frontend deploy (AKS) — ${{ inputs.environment }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Namespace** : ${{ secrets.AZURE_OWNER }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Image** : ${{ steps.find-acr.outputs.login_server }}/quiz-frontend:${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **URL** : https://${{ secrets.AZURE_OWNER }}-frontend.${{ steps.ingress-ip.outputs.ip }}.nip.io" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Actor** : @${{ github.actor }}" >> "$GITHUB_STEP_SUMMARY"
