@@ -8,7 +8,7 @@
 # sed-into-environment.ts step -- a backend URL/key change means a rebuild,
 # not just a new `helm upgrade`.
 # ─────────────────────────────────────────────────────────────────────────────
-name: AKS - Deploy frontend application
+name: AZ AKS - Deploy frontend application
 run-name: "Deploy frontend (AKS) · ${{ inputs.environment }} · @${{ github.actor }}"
 
 on:
@@ -97,22 +97,23 @@ jobs:
 
       - name: "Verify namespace exists"
         run: |
-          if ! kubectl get namespace "${{ secrets.AZURE_OWNER }}" >/dev/null 2>&1; then
-            echo "::error::Namespace '${{ secrets.AZURE_OWNER }}' doesn't exist yet on $AKS_CLUSTER. Ask the trainer to run scripts/bootstrap-aks-namespace.sh (azure-infra-terraform) first."
+          OUTPUT=$(kubectl get namespace "${{ secrets.AZURE_OWNER }}" 2>&1) || {
+            echo "::error::Could not confirm namespace '${{ secrets.AZURE_OWNER }}' exists on $AKS_CLUSTER. If the error below mentions a connection timeout, the cluster is probably stopped/still starting (az aks start, wait a few minutes, retry). If it's a clean \"not found\", ask the trainer to run scripts/bootstrap-aks-namespace.sh (azure-infra-terraform). Raw output: $OUTPUT"
             exit 1
-          fi
+          }
 
       - name: "Resolve ingress public IP"
         id: ingress-ip
         run: |
           IP=""
           for i in $(seq 1 30); do
-            IP=$(kubectl get svc -n app-routing-system -l app.kubernetes.io/name=nginx -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+            OUTPUT=$(kubectl get svc -n app-routing-system -l app.kubernetes.io/name=nginx -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}' 2>&1)
+            IP=$(echo "$OUTPUT" | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' || true)
             [ -n "$IP" ] && break
             sleep 10
           done
           if [ -z "$IP" ]; then
-            echo "::error::Could not resolve the App Routing add-on's ingress IP after 5 minutes."
+            echo "::error::Could not resolve the App Routing add-on's ingress IP after 5 minutes. Last kubectl output: $OUTPUT"
             exit 1
           fi
           echo "ip=$IP" >> "$GITHUB_OUTPUT"

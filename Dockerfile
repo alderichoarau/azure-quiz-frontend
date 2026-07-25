@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # ──────────────────────────────────────────────────────────────────────────────
 # Multi-stage build for the AKS track (piste "AKS", see helm/ and
-# .github/workflows/deploy-aks.yml). swa-deploy.yml (Static Web Apps track)
+# .github/workflows/aks-deploy.yml). swa-deploy.yml (Static Web Apps track)
 # never uses this image.
 #
 # API_BASE_URL/API_KEY are baked in at build time via the same sed-into-

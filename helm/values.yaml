@@ -1,5 +1,5 @@
 # image.repository/tag and ingress.host are always passed via `--set` from
-# deploy-aks.yml, same reasoning as quiz-backend/helm/values.yaml.
+# aks-deploy.yml, same reasoning as quiz-backend/helm/values.yaml.
 
 replicaCount: 1
 
