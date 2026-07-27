@@ -98,7 +98,7 @@ jobs:
           sed -i "s/__BACKEND_API_KEY__/${{ steps.read-key.outputs.value }}/" src/environments/environment.ts
 
       - name: "Set up Node"
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
