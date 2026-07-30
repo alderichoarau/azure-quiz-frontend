@@ -43,10 +43,19 @@ COPY --from=build /app/dist/azure-quiz-frontend/browser /usr/share/nginx/html
 # ("mkdir() /var/cache/nginx/client_temp failed (13: Permission denied)" at
 # boot -- hit live). Pre-create and chown them here, at build time, while
 # we're still root.
+#
+# /var/run is a symlink to /run on Alpine -- chowning the symlink path alone
+# doesn't reliably propagate to files later created inside the real target
+# directory ("open() /run/nginx.pid failed (13: Permission denied)" at boot,
+# hit live even after chowning /var/run). Touch and chown the pidfile itself,
+# at its real /run path, so nginx only has to overwrite an already-owned file
+# instead of creating a new one in a directory it doesn't own.
 RUN mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/proxy_temp \
              /var/cache/nginx/fastcgi_temp /var/cache/nginx/uwsgi_temp \
-             /var/cache/nginx/scgi_temp /var/run \
- && chown -R 101:101 /var/cache/nginx /var/run /etc/nginx/conf.d /usr/share/nginx/html
+             /var/cache/nginx/scgi_temp \
+ && chown -R 101:101 /var/cache/nginx /etc/nginx/conf.d /usr/share/nginx/html \
+ && touch /run/nginx.pid \
+ && chown 101:101 /run/nginx.pid
 
 USER 101
 EXPOSE 80
