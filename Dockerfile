@@ -35,7 +35,7 @@ FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/azure-quiz-frontend/browser /usr/share/nginx/html
 
-fix: chown nginx runtime dirs for non-root UID 101# The Helm chart runs this container as non-root (securityContext.runAsUser:
+# The Helm chart runs this container as non-root (securityContext.runAsUser:
 # 101, deployment.yaml) -- nginx's master process normally creates
 # /var/cache/nginx/*'s subdirectories and the pidfile itself while still
 # root, before dropping privileges to the "nginx" user for workers only.
