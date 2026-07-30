@@ -35,4 +35,18 @@ FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/azure-quiz-frontend/browser /usr/share/nginx/html
 
+fix: chown nginx runtime dirs for non-root UID 101# The Helm chart runs this container as non-root (securityContext.runAsUser:
+# 101, deployment.yaml) -- nginx's master process normally creates
+# /var/cache/nginx/*'s subdirectories and the pidfile itself while still
+# root, before dropping privileges to the "nginx" user for workers only.
+# Forced non-root from the start, it never has the rights to create them
+# ("mkdir() /var/cache/nginx/client_temp failed (13: Permission denied)" at
+# boot -- hit live). Pre-create and chown them here, at build time, while
+# we're still root.
+RUN mkdir -p /var/cache/nginx/client_temp /var/cache/nginx/proxy_temp \
+             /var/cache/nginx/fastcgi_temp /var/cache/nginx/uwsgi_temp \
+             /var/cache/nginx/scgi_temp /var/run \
+ && chown -R 101:101 /var/cache/nginx /var/run /etc/nginx/conf.d /usr/share/nginx/html
+
+USER 101
 EXPOSE 80
