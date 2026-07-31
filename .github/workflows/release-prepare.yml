@@ -2,8 +2,9 @@
 # Same pattern as alderichoarau.github.io's release-prepare.yml/release-publish.yml, applied here:
 # bump package.json's version (source of truth for src/app/core/version.ts, see
 # scripts/generate-version.mjs) on a release/<tag> branch, open a PR back to the triggering
-# branch, auto-merge it. Merging is what actually creates the tag/release/deploy — see
-# release-push.yml, triggered by that merge.
+# branch. Merging it (manually — no auto-merge here, a deliberate manual checkpoint before a
+# release goes out) is what actually creates the tag/release/deploy — see release-push.yml,
+# triggered by that merge.
 # -----------------------------------------------------------------------------------------------
 name: GitHub - Prepare Release
 run-name: Prepare release ${{ inputs.tag_name }}
@@ -59,14 +60,4 @@ jobs:
             --base "${{ github.ref_name }}" \
             --head "release/${{ inputs.tag_name }}" \
             --title "chore: release ${{ inputs.tag_name }}" \
-            --body "Bumps the version to \`${{ inputs.tag_name }}\`. Merging this PR creates the \`${{ inputs.tag_name }}\` tag, the matching GitHub release, and deploys it to **nonprod** (AKS + Static Web App) — see release-push.yml."
-
-      - name: "Enable auto-merge (squash)"
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # Squash keeps only the GitHub-generated (verified) merge commit on
-          # main, avoiding the unsigned "chore: bump version" bot commit that
-          # a regular merge commit would otherwise carry into history. Actual
-          # merge still waits on build-all.yml's required check.
-          gh pr merge --squash --auto "release/${{ inputs.tag_name }}"
+            --body "Bumps the version to \`${{ inputs.tag_name }}\`. **Merge this PR (squash) when ready to ship** — merging creates the \`${{ inputs.tag_name }}\` tag, the matching GitHub release, and deploys it to **nonprod** (AKS + Static Web App), see release-push.yml."

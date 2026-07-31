@@ -62,8 +62,8 @@ AKS cluster instead. Its Ingress gets a real Let's Encrypt cert (see the infra r
 `scripts/setup-cert-manager.sh`) rather than a self-signed one.
 
 **Releasing**: run `release-prepare.yml` (`workflow_dispatch`, input `tag_name`, e.g. `v1.1.0`) — it bumps
-`package.json` and opens an auto-merging PR. Merging it (`release-push.yml`) tags the release, creates the
-GitHub release, and deploys the tag to **nonprod** on both tracks (AKS + Static Web App).
+`package.json` and opens a PR. Squash-merging it yourself when ready (`release-push.yml`) tags the release,
+creates the GitHub release, and deploys the tag to **nonprod** on both tracks (AKS + Static Web App).
 
 ## Structure
 
