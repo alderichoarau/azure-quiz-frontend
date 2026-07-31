@@ -16,6 +16,12 @@ ingress:
   enabled: true
   className: webapprouting.kubernetes.azure.com
   host: "" # <owner>-frontend.<ingress-ip>.nip.io, set by CI
+  # Name of a ClusterIssuer created by
+  # azure-infra-terraform/scripts/setup-cert-manager.sh (trainer-run,
+  # one-shot on the shared cluster) -- "letsencrypt-prod" once that's been
+  # run, "" to fall back to the App Routing add-on's self-signed default
+  # (e.g. cert-manager not installed yet).
+  clusterIssuer: letsencrypt-prod
 
 # No secretName here on purpose -- unlike quiz-backend, this image has no
 # runtime secrets: the API key is baked into the JS bundle at Docker build

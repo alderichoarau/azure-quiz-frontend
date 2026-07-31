@@ -5,8 +5,24 @@ metadata:
   name: {{ include "quiz-frontend.fullname" . }}
   labels:
     {{- include "quiz-frontend.labels" . | nindent 4 }}
+  {{- if .Values.ingress.clusterIssuer }}
+  annotations:
+    # Real Let's Encrypt cert instead of the App Routing add-on's self-signed
+    # default -- cert-manager (setup-cert-manager.sh/.yml, trainer-run
+    # one-shot on the shared cluster) watches for this annotation and issues
+    # into spec.tls[].secretName below. Set ingress.clusterIssuer to "" to
+    # fall back to the old self-signed behavior (e.g. cert-manager not
+    # installed yet on this cluster).
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+  {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.clusterIssuer }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ include "quiz-frontend.fullname" . }}-tls
+  {{- end }}
   rules:
     - host: {{ .Values.ingress.host | quote }}
       http:
