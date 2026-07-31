@@ -4,15 +4,23 @@ Angular application to review Microsoft certifications (AZ-900 to start, AZ-104 
 module or mock exam, accessible from a simple link (no account). Consumes the REST API of
 [azure-quiz-backend](../azure-quiz-backend).
 
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
+![Angular Material](https://img.shields.io/badge/Angular_Material-22-757575?logo=materialdesign&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-4.1-6E9F18?logo=vitest&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)
+![Prettier](https://img.shields.io/badge/Prettier-3.9-F7B93E?logo=prettier&logoColor=black)
+
 ## Last analysis
-[![GitHub - Build all](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml)
+[![CI · Build all](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml)
 [![GitHub - Sonar Cloud Analysis](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml)
+[![Deploy · Static Web Apps](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml)
+[![Deploy · AKS](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
-
 
 ## Stack
 
@@ -50,20 +58,30 @@ Static output in `dist/azure-quiz-frontend/browser` (that's the folder to point 
 Before building for a real deployment, update `src/environments/environment.ts` with the deployed
 backend API URL (`apiBaseUrl`).
 
-## Deployment (Azure Static Web Apps)
+## Deployment
 
-- `public/staticwebapp.config.json` handles the SPA fallback (all non-file routes redirect to
-  `index.html`) — it is copied as-is into the build output folder (`public/` = output root).
-- The CI/CD deployment workflow to Azure Static Web Apps will be added once the infrastructure is
-  provisioned.
+Two independent tracks, both `workflow_dispatch` with a `nonprod`/`prod` choice — pick whichever this
+learner's infrastructure uses (see
+[azure-infra-terraform](https://github.com/alderichoarau/azure-infra-terraform)), not both against the same
+secrets.
 
-Piste AKS: `.github/workflows/aks-deploy.yml` builds the Docker image and `helm upgrade`s it onto the shared
-AKS cluster instead. Its Ingress gets a real Let's Encrypt cert (see the infra repo's
+### Static Web Apps
+
+`.github/workflows/swa-deploy.yml` builds the Angular app and deploys it to the Azure Static Web App
+provisioned by the infra repo. `public/staticwebapp.config.json` handles the SPA fallback (all non-file
+routes redirect to `index.html`) — it is copied as-is into the build output folder (`public/` = output root).
+
+### AKS
+
+`.github/workflows/aks-deploy.yml` builds the Docker image, pushes it to ACR, and `helm upgrade`s it onto the
+shared AKS cluster instead. Its Ingress gets a real Let's Encrypt cert (see the infra repo's
 `scripts/setup-cert-manager.sh`) rather than a self-signed one.
 
-**Releasing**: run `release-prepare.yml` (`workflow_dispatch`, input `tag_name`, e.g. `v1.1.0`) — it bumps
-`package.json` and opens a PR. Squash-merging it yourself when ready (`release-push.yml`) tags the release,
-creates the GitHub release, and deploys the tag to **nonprod** on both tracks (AKS + Static Web App).
+### Releasing
+
+Run `release-prepare.yml` (`workflow_dispatch`, input `tag_name`, e.g. `v1.1.0`) — it bumps `package.json` and
+opens a PR. Squash-merging it yourself when ready (`release-push.yml`) tags the release, creates the GitHub
+release, and deploys the tag to **nonprod** on both tracks above.
 
 ## Structure
 
@@ -74,7 +92,7 @@ creates the GitHub release, and deploys the tag to **nonprod** on both tracks (A
 
 ## Out of scope for this repo
 
-- Provisioning the Azure infrastructure (Static Web App, App Service, database).
+- Provisioning the Azure infrastructure (Static Web App, App Service, database, AKS, etc...).
 
 ## Contributing
 
