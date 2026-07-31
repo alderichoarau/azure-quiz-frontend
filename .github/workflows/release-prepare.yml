@@ -1,0 +1,72 @@
+# -----------------------------------------------------------------------------------------------
+# Same pattern as alderichoarau.github.io's release-prepare.yml/release-publish.yml, applied here:
+# bump package.json's version (source of truth for src/app/core/version.ts, see
+# scripts/generate-version.mjs) on a release/<tag> branch, open a PR back to the triggering
+# branch, auto-merge it. Merging is what actually creates the tag/release/deploy — see
+# release-push.yml, triggered by that merge.
+# -----------------------------------------------------------------------------------------------
+name: GitHub - Prepare Release
+run-name: Prepare release ${{ inputs.tag_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name to create (e.g. v1.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: "Bump version & open release PR"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Setup Node"
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: "Bump package.json version"
+        run: npm version "${{ inputs.tag_name }}" --no-git-tag-version --allow-same-version
+
+      - name: "Commit and push release branch"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "release/${{ inputs.tag_name }}"
+          git add package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo "package.json already at ${{ inputs.tag_name }}, nothing to bump" >&2
+            exit 1
+          fi
+          git commit -m "chore: bump version to ${{ inputs.tag_name }}"
+          git push origin "release/${{ inputs.tag_name }}"
+
+      - name: "Open pull request"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --base "${{ github.ref_name }}" \
+            --head "release/${{ inputs.tag_name }}" \
+            --title "chore: release ${{ inputs.tag_name }}" \
+            --body "Bumps the version to \`${{ inputs.tag_name }}\`. Merging this PR creates the \`${{ inputs.tag_name }}\` tag, the matching GitHub release, and deploys it to **nonprod** (AKS + Static Web App) — see release-push.yml."
+
+      - name: "Enable auto-merge (squash)"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Squash keeps only the GitHub-generated (verified) merge commit on
+          # main, avoiding the unsigned "chore: bump version" bot commit that
+          # a regular merge commit would otherwise carry into history. Actual
+          # merge still waits on build-all.yml's required check.
+          gh pr merge --squash --auto "release/${{ inputs.tag_name }}"
