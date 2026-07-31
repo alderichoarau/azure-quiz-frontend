@@ -2,6 +2,7 @@
   <a routerLink="/" class="toolbar-title">
     <mat-icon>school</mat-icon>
     {{ 'app.title' | translate }}
+    <span class="version">v{{ version }}</span>
   </a>
   <span class="spacer"></span>
   <button mat-button (click)="switchLang('fr')">FR</button>

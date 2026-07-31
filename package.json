@@ -1,6 +1,6 @@
 {
   "name": "azure-quiz-frontend",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "UNLICENSED",
   "author": "Alderic Hoarau",
   "scripts": {
@@ -16,10 +16,10 @@
     "format": "prettier --write \"src/**/*.{ts,js,html,scss,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js,html,scss,css,json}\"",
     "check": "npm run lint && npm run format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "node scripts/generate-version.mjs"
   },
   "private": true,
-  "packageManager": "npm@12.0.2",
   "lint-staged": {
     "src/**/*.{ts,js}": [
       "prettier --write"
