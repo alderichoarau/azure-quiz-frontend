@@ -18,9 +18,22 @@ FROM node:24-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+# generate-version.mjs runs as npm's "postinstall" hook (package.json) --
+# needs to exist before `npm ci` fires it, so it's copied in ahead of the
+# rest of the source instead of waiting for the COPY . . below. Rarely
+# changes, so this barely dents the npm ci layer's cache hit rate.
+COPY scripts/generate-version.mjs ./scripts/generate-version.mjs
 RUN npm ci
 
 COPY . .
+
+# Re-run now that the full source (including whatever version.ts happens to
+# be committed) is in place -- the postinstall run above executed inside a
+# tree that only had package.json, and this COPY just overwrote its output
+# with git's copy again. Cheap and idempotent; guarantees the image ships the
+# version.ts matching package.json's actual version, not a possibly-stale
+# committed one.
+RUN node scripts/generate-version.mjs
 
 ARG API_BASE_URL
 ARG API_KEY
