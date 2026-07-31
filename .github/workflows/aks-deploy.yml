@@ -35,6 +35,14 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Pins the OIDC subject to repo:<org>/<repo>:environment:<name> instead of
+    # ref:refs/heads/<branch>|refs/tags/<tag> -- stable across every future
+    # release tag (release-push.yml dispatches this workflow with --ref
+    # <tag>, azure-infra-terraform's ci-app-deploy-identity.tf has a matching
+    # federated credential per environment name, not per ref). Without this,
+    # a tag-triggered run fails Azure login with AADSTS700213 (no federated
+    # credential matches that tag's ref subject) -- hit live.
+    environment: ${{ inputs.environment }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
