@@ -57,6 +57,10 @@ backend API URL (`apiBaseUrl`).
 - The CI/CD deployment workflow to Azure Static Web Apps will be added once the infrastructure is
   provisioned.
 
+Piste AKS: `.github/workflows/aks-deploy.yml` builds the Docker image and `helm upgrade`s it onto the shared
+AKS cluster instead. Its Ingress gets a real Let's Encrypt cert (see the infra repo's
+`scripts/setup-cert-manager.sh`) rather than a self-signed one.
+
 ## Structure
 
 - `src/app/core` — models, services (`QuizApiService` for REST calls, `QuizSessionStore` for
