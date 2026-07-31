@@ -93,7 +93,12 @@ jobs:
           echo "value=$KEY" >> "$GITHUB_OUTPUT"
 
       - name: "Install kubectl + kubelogin"
-        run: az aks install-cli
+        # --kubelogin-version pinned: unpinned, this calls GitHub's
+        # unauthenticated releases/latest API (60 req/hour per IP, shared
+        # across every GitHub-hosted runner) and intermittently fails with
+        # "403 rate limit exceeded" -- hit live. kubectl's own version lookup
+        # (dl.k8s.io/release/stable.txt) isn't affected, only kubelogin's is.
+        run: az aks install-cli --kubelogin-version v0.2.19
 
       - name: "Get AKS credentials"
         run: |
