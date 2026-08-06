@@ -38,11 +38,11 @@ updates:
           - "*"
 
   # Docker
-  - package-ecosystem: docker
-    directory: /
+  - package-ecosystem: "docker"
+    directory: "/"
     schedule:
-      interval: monthly
-      time: '06:00'
+      interval: "monthly"
+      time: "06:00"
       timezone: Europe/Paris
     open-pull-requests-limit: 5
     groups:
