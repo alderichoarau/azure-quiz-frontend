@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
+import { adminKeyInterceptor } from './core/interceptors/admin-key.interceptor';
 import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
 import { routes } from './app.routes';
 
@@ -12,7 +13,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([apiKeyInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([apiKeyInterceptor, adminKeyInterceptor])),
     provideAnimationsAsync(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),

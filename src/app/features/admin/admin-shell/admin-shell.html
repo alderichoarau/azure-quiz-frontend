@@ -1,0 +1,37 @@
+@if (key(); as currentKey) {
+  <div class="admin-bar">
+    <a routerLink="/" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'modules.back' | translate }}
+    </a>
+    <span class="admin-badge">
+      <mat-icon>admin_panel_settings</mat-icon>
+      {{ 'admin.badge' | translate }}
+    </span>
+    <span class="spacer"></span>
+    <button mat-button (click)="signOut()">
+      <mat-icon>logout</mat-icon>
+      {{ 'admin.signOut' | translate }}
+    </button>
+  </div>
+  <router-outlet />
+} @else {
+  <div class="gate">
+    <mat-icon class="gate-icon">lock</mat-icon>
+    <h1>{{ 'admin.enterKeyTitle' | translate }}</h1>
+    <p class="gate-hint">{{ 'admin.enterKeyHint' | translate }}</p>
+    <form class="gate-form" (ngSubmit)="enter()">
+      <input
+        type="password"
+        class="gate-input"
+        [placeholder]="'admin.keyPlaceholder' | translate"
+        [(ngModel)]="keyInput"
+        name="adminKey"
+        autocomplete="off"
+      />
+      <button mat-flat-button color="primary" type="submit">
+        {{ 'admin.enter' | translate }}
+      </button>
+    </form>
+  </div>
+}

@@ -11,6 +11,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { CreateQuizSessionRequest } from '../../core/models/quiz.model';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { QuestionImage } from '../../shared/components/question-image/question-image';
+import { InlineMarkdownPipe } from '../../shared/pipes/inline-markdown.pipe';
 
 @Component({
   selector: 'app-quiz',
@@ -21,6 +23,8 @@ import { QuizSessionStore } from '../../core/services/quiz-session.store';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatRadioModule,
+    QuestionImage,
+    InlineMarkdownPipe,
     TranslatePipe,
   ],
   templateUrl: './quiz.html',

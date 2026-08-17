@@ -1,0 +1,89 @@
+.admin-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-tertiary-container);
+  background: var(--mat-sys-tertiary-container);
+  padding: 4px 12px;
+  border-radius: 999px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 16px;
+}
+
+.gate-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 12px;
+}
+
+.gate h1 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+}
+
+.gate-hint {
+  margin: 0 0 24px;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+  max-width: 360px;
+}
+
+.gate-form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.gate-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 14px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--mat-sys-primary);
+  }
+}

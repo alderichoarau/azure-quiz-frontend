@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
@@ -14,7 +14,10 @@ describe('App', () => {
       imports: [App],
       providers: [
         provideHttpClient(),
-        provideRouter([]),
+        provideRouter([
+          { path: '', children: [] },
+          { path: 'admin', children: [] },
+        ]),
         provideNoopAnimations(),
         provideTranslateService({ lang: 'fr', fallbackLang: 'fr' }),
       ],
@@ -47,5 +50,23 @@ describe('App', () => {
     fixture.componentInstance.switchLang('en');
 
     expect(useSpy).toHaveBeenCalledWith('en');
+  });
+
+  it('widens the content area on admin routes and narrows it back on other routes', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isAdminRoute()).toBe(false);
+
+    await router.navigateByUrl('/admin');
+    expect(fixture.componentInstance.isAdminRoute()).toBe(true);
+    fixture.detectChanges();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.content')?.classList.contains('content-wide')
+    ).toBe(true);
+
+    await router.navigateByUrl('/');
+    expect(fixture.componentInstance.isAdminRoute()).toBe(false);
   });
 });

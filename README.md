@@ -1,6 +1,6 @@
 # azure-quiz-frontend
 
-Angular application to review Microsoft certifications (AZ-900 to start, AZ-104 next): review by
+Angular application to review Microsoft certifications (AZ-900, AZ-104 in progress): review by
 module or mock exam, accessible from a simple link (no account). Consumes the REST API of
 [azure-quiz-backend](../azure-quiz-backend).
 
@@ -85,10 +85,27 @@ release, and deploys the tag to **nonprod** on both tracks above.
 
 ## Structure
 
-- `src/app/core` — models, services (`QuizApiService` for REST calls, `QuizSessionStore` for
-  signal-based quiz session state)
+- `src/app/core` — models, services (`QuizApiService`/`AdminApiService` for REST calls,
+  `QuizSessionStore` for signal-based quiz session state, `AdminKeyStore` for the admin gate — see
+  "Content administration"), interceptors (`apiKeyInterceptor`, `adminKeyInterceptor`)
 - `src/app/features` — pages: `certifications` (home), `modules` (a certification's modules +
-  starting a mock exam), `quiz` (question-by-question flow), `results` (final score)
+  starting a mock exam), `quiz` (question-by-question flow), `results` (final score), `admin`
+  (certification/module/question authoring, editing, deletion — see below)
+- `src/app/shared` — reused across `quiz` and `admin`: `QuestionImage` (fetches an image content
+  block's bytes via `HttpClient` so `X-Api-Key` is attached — a plain `<img src>` would 401 in
+  prod), `InlineMarkdownPipe` (renders the small `**bold**`-only subset admins can use in question
+  text/explanations)
+
+## Content administration
+
+`/admin` (not linked from the main nav — reachable by URL only) lets you author certifications,
+modules, and questions (text + ordered images, single/multiple choice) without touching SQL or
+redeploying. Gated by an admin key prompt kept in `sessionStorage` only, sent as `X-Admin-Key` on
+`/api/admin/**` requests by `adminKeyInterceptor` — unlike the public API key
+(`environment.apiKey`), this one is never built into the JS bundle; a 401/403 response clears the
+stored key and drops the shell back to the prompt. See the backend README's "Content authoring"
+section for the server side (soft-delete semantics, the image-upload flow, the bulk-import
+script used for AZ-104's non-exam content).
 
 ## Out of scope for this repo
 

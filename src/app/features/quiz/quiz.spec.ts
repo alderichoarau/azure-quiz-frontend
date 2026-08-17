@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
 import { QuizSession } from '../../core/models/quiz.model';
+import { ImageApiService } from '../../core/services/image-api.service';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
 import { Quiz } from './quiz';
@@ -65,6 +66,10 @@ function setup(storeOverrides: Record<string, unknown> = {}, apiOverrides: Recor
           ...apiOverrides,
         },
       },
+      {
+        provide: ImageApiService,
+        useValue: { getImage: () => of(new Blob(['x'], { type: 'image/png' })) },
+      },
     ],
   });
 
@@ -108,5 +113,27 @@ describe('Quiz', () => {
     component.toggleOption('o2', true);
 
     expect(component.selectedOptionIds()).toEqual(['o1', 'o2']);
+  });
+
+  it('renders content blocks instead of the plain statement when present', () => {
+    const sessionWithBlocks: QuizSession = {
+      ...session,
+      questions: [
+        {
+          ...session.questions[0],
+          contentBlocks: [
+            { id: 'b1', type: 'TEXT', text: 'Look at this diagram:' },
+            { id: 'b2', type: 'IMAGE', text: null },
+            { id: 'b3', type: 'TEXT', text: 'What does it show?' },
+          ],
+        },
+      ],
+    };
+    const { fixture } = setup({ session: () => sessionWithBlocks, currentQuestion: () => sessionWithBlocks.questions[0] });
+
+    const html: string = fixture.nativeElement.innerHTML;
+    expect(html).toContain('Look at this diagram:');
+    expect(html).toContain('What does it show?');
+    expect(html).not.toContain('class="statement"');
   });
 });

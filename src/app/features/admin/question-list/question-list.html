@@ -1,0 +1,66 @@
+<a [routerLink]="['/admin/certifications', certificationId, 'modules']" class="back-link">
+  <mat-icon>arrow_back</mat-icon>
+  {{ 'admin.modules.title' | translate }}
+</a>
+
+<header class="page-header">
+  <h1>{{ 'admin.questionList.title' | translate }}</h1>
+  <p class="page-subtitle">{{ 'admin.questionList.subtitle' | translate }}</p>
+</header>
+
+<a
+  mat-flat-button
+  color="primary"
+  class="add-btn"
+  [routerLink]="['/admin/certifications', certificationId, 'modules', moduleId, 'questions', 'new']"
+>
+  <mat-icon>add</mat-icon>
+  {{ 'admin.modules.addQuestion' | translate }}
+</a>
+
+@if (deleteError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+}
+
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (loadError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+} @else if (questions().length === 0) {
+  <p class="empty-hint">{{ 'admin.questionList.empty' | translate }}</p>
+} @else {
+  <div class="card-grid">
+    @for (question of questions(); track question.questionId) {
+      <div class="question-card">
+        <p class="question-statement">{{ question.statement }}</p>
+        <div class="question-actions">
+          <a
+            mat-icon-button
+            [routerLink]="[
+              '/admin/certifications',
+              certificationId,
+              'modules',
+              moduleId,
+              'questions',
+              question.questionId,
+              'edit',
+            ]"
+            [attr.aria-label]="'admin.modules.edit' | translate"
+          >
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button
+            mat-icon-button
+            type="button"
+            (click)="deleteQuestion(question)"
+            [attr.aria-label]="'admin.modules.delete' | translate"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

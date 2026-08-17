@@ -1,3 +1,5 @@
+import { ContentBlock } from './content-block.model';
+
 export type QuizMode = 'MODULE' | 'EXAM';
 
 export type QuestionType = 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
@@ -12,6 +14,12 @@ export interface QuizQuestion {
   statement: string;
   type: QuestionType;
   options: AnswerOption[];
+  /**
+   * Ordered text/image blocks for questions authored via the admin form. Null/empty for the
+   * legacy AZ-900 content seeded via SQL migrations — the quiz view falls back to `statement`
+   * in that case.
+   */
+  contentBlocks?: ContentBlock[] | null;
 }
 
 export interface QuizSession {

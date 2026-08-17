@@ -1,0 +1,58 @@
+<header class="page-header">
+  <h1>{{ 'admin.certifications.title' | translate }}</h1>
+  <p class="page-subtitle">{{ 'admin.certifications.subtitle' | translate }}</p>
+</header>
+
+<form class="admin-card" (ngSubmit)="submit()">
+  <h2>{{ 'admin.certifications.newTitle' | translate }}</h2>
+  <label class="field">
+    <span>{{ 'admin.certifications.code' | translate }}</span>
+    <input type="text" [(ngModel)]="code" name="code" placeholder="AZ-104" />
+  </label>
+  <label class="field">
+    <span>{{ 'admin.certifications.certTitle' | translate }}</span>
+    <input type="text" [(ngModel)]="title" name="title" />
+  </label>
+  <label class="field">
+    <span>{{ 'admin.certifications.description' | translate }}</span>
+    <textarea rows="2" [(ngModel)]="description" name="description"></textarea>
+  </label>
+
+  @if (submitError(); as error) {
+    <p class="error">{{ error | translate }}</p>
+  }
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+    {{ 'admin.certifications.submit' | translate }}
+  </button>
+</form>
+
+<h2 class="section-title">{{ 'admin.certifications.existing' | translate }}</h2>
+
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (loadError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+} @else if (certifications().length === 0) {
+  <p class="empty-hint">{{ 'admin.certifications.empty' | translate }}</p>
+} @else {
+  <div class="card-grid">
+    @for (certification of certifications(); track certification.id) {
+      <a class="cert-card" [routerLink]="['/admin/certifications', certification.id, 'modules']">
+        <div class="cert-body">
+          <span class="cert-code">{{ certification.code }}</span>
+          <h3 class="cert-title">{{ certification.title }}</h3>
+          <p class="module-count">
+            {{
+              (certification.moduleCount > 1 ? 'certifications.moduleCountPlural' : 'certifications.moduleCount')
+                | translate: { count: certification.moduleCount }
+            }}
+          </p>
+        </div>
+        <mat-icon class="chevron">chevron_right</mat-icon>
+      </a>
+    }
+  </div>
+}

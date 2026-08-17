@@ -21,6 +21,23 @@
   line-height: 1.4;
 }
 
+.content-blocks {
+  margin: 16px 0 20px;
+}
+
+.content-text {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  // Preserves line breaks typed in the admin textarea while still collapsing
+  // repeated spaces and wrapping normally — a plain <p> would collapse them.
+  white-space: pre-line;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .state-container {
   display: flex;
   justify-content: center;
@@ -106,6 +123,7 @@
 .explanation {
   margin: 4px 0 0;
   font-size: 0.9rem;
+  white-space: pre-line;
 }
 
 .action-btn {

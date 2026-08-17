@@ -1,0 +1,104 @@
+<a routerLink="/admin/certifications" class="back-link">
+  <mat-icon>arrow_back</mat-icon>
+  {{ 'admin.certifications.title' | translate }}
+</a>
+
+<header class="page-header">
+  <h1>
+    {{ 'admin.modules.title' | translate }}
+    @if (certificationCode(); as code) {
+      <span class="cert-code">{{ code }}</span>
+    }
+  </h1>
+  <p class="page-subtitle">{{ 'admin.modules.subtitle' | translate }}</p>
+</header>
+
+<form class="admin-card" (ngSubmit)="submit()">
+  <h2>
+    {{ (editingModuleId() ? 'admin.modules.editTitle' : 'admin.modules.newTitle') | translate }}
+  </h2>
+  <label class="field">
+    <span>{{ 'admin.modules.code' | translate }}</span>
+    <input type="text" [(ngModel)]="code" name="code" placeholder="module-01" />
+  </label>
+  <label class="field">
+    <span>{{ 'admin.modules.moduleTitle' | translate }}</span>
+    <input type="text" [(ngModel)]="title" name="title" />
+  </label>
+  <label class="field">
+    <span>{{ 'admin.modules.description' | translate }}</span>
+    <textarea rows="2" [(ngModel)]="description" name="description"></textarea>
+  </label>
+  <label class="field">
+    <span>{{ 'admin.modules.type' | translate }}</span>
+    <select [(ngModel)]="type" name="type">
+      <option value="CONTENT">{{ 'admin.modules.typeContent' | translate }}</option>
+      <option value="MOCK_EXAM">{{ 'admin.modules.typeMockExam' | translate }}</option>
+    </select>
+  </label>
+
+  @if (submitError(); as error) {
+    <p class="error">{{ error | translate }}</p>
+  }
+
+  <div class="form-actions">
+    <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+      {{ (editingModuleId() ? 'admin.modules.updateSubmit' : 'admin.modules.submit') | translate }}
+    </button>
+    @if (editingModuleId()) {
+      <button mat-stroked-button type="button" (click)="cancelEdit()">
+        {{ 'admin.modules.cancel' | translate }}
+      </button>
+    }
+  </div>
+</form>
+
+<h2 class="section-title">{{ 'admin.modules.existing' | translate }}</h2>
+
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (loadError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+} @else if (modules().length === 0) {
+  <p class="empty-hint">{{ 'admin.modules.empty' | translate }}</p>
+} @else {
+  <div class="card-grid">
+    @for (module of modules(); track module.id) {
+      <div class="module-card">
+        <div class="module-body">
+          <h3 class="module-title">{{ module.title }}</h3>
+          <p class="question-count">
+            {{
+              (module.questionCount > 1 ? 'modules.questionCountPlural' : 'modules.questionCount')
+                | translate: { count: module.questionCount }
+            }}
+          </p>
+        </div>
+        <div class="module-actions">
+          <a
+            mat-stroked-button
+            color="primary"
+            [routerLink]="['/admin/certifications', certificationId, 'modules', module.id, 'questions']"
+          >
+            {{ 'admin.modules.manageQuestions' | translate }}
+          </a>
+          <a
+            mat-stroked-button
+            color="primary"
+            [routerLink]="['/admin/certifications', certificationId, 'modules', module.id, 'questions', 'new']"
+          >
+            {{ 'admin.modules.addQuestion' | translate }}
+          </a>
+          <button mat-icon-button type="button" (click)="startEdit(module)" [attr.aria-label]="'admin.modules.edit' | translate">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="deleteModule(module)" [attr.aria-label]="'admin.modules.delete' | translate">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+}

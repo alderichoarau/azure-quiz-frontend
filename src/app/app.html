@@ -9,6 +9,6 @@
   <button mat-button (click)="switchLang('en')">EN</button>
 </mat-toolbar>
 
-<main class="content">
+<main class="content" [class.content-wide]="isAdminRoute()">
   <router-outlet />
 </main>

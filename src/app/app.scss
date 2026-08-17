@@ -59,3 +59,9 @@
     padding: 32px 24px calc(40px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+// Admin pages (question/module/certification forms) benefit from real width — the two-column
+// editor + live-preview layout in particular feels cramped at the quiz view's 760px column.
+.content.content-wide {
+  max-width: 1280px;
+}

@@ -6,7 +6,19 @@
     </p>
   </div>
 
-  <h2 class="statement">{{ question.statement }}</h2>
+  @if (question.contentBlocks && question.contentBlocks.length > 0) {
+    <div class="content-blocks">
+      @for (block of question.contentBlocks; track block.id) {
+        @if (block.type === 'TEXT') {
+          <p class="content-text" [innerHTML]="block.text | inlineMarkdown"></p>
+        } @else {
+          <app-question-image [blockId]="block.id" />
+        }
+      }
+    </div>
+  } @else {
+    <h2 class="statement">{{ question.statement }}</h2>
+  }
 
   @if (question.type === 'MULTIPLE_CHOICE') {
     <div class="options">
@@ -51,7 +63,7 @@
       <div>
         <p class="feedback-title">{{ (result.correct ? 'quiz.correct' : 'quiz.incorrect') | translate }}</p>
         @if (result.explanation) {
-          <p class="explanation">{{ result.explanation }}</p>
+          <p class="explanation" [innerHTML]="result.explanation | inlineMarkdown"></p>
         }
       </div>
     </div>
