@@ -6,6 +6,12 @@
 #   - npm audit          -- npm's own advisory database
 #   - Trivy (vuln, fs)   -- reads package-lock.json directly (no install needed), broader/faster
 #     vulnerability DB, same tool already used for secrets/container scanning in this repo.
+#
+# Also generates two compliance/inventory artifacts, both scoped to production `dependencies`
+# only (Trivy suppresses devDependencies by default, matching what actually ships in the bundle):
+#   - license-scan -- flags non-permissive licenses. Informational only (no exit-code set, so it
+#     never blocks a merge) until there's an explicit allow/deny policy to enforce against.
+#   - sbom         -- CycloneDX component inventory, uploaded as a build artifact.
 # -----------------------------------------------------------------------------------------------
 name: "GitHub - Security (SCA): Dependency Vulnerability Scan"
 run-name: Security (SCA) - Dependency Vulnerability Scan
@@ -86,3 +92,64 @@ jobs:
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  license-scan:
+    name: "Trivy (license compliance)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Scan dependency licenses (trivy)"
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scanners: license
+          hide-progress: true
+          output: trivy-license.txt
+          # No exit-code set (defaults to 0) -- informational, doesn't block
+          # merges. Flip this once there's an explicit allow/deny license
+          # policy to actually enforce.
+
+      - name: "Publish results to job summary"
+        if: always()
+        run: |
+          if [ -s trivy-license.txt ]; then
+            {
+              echo "## 📄 Trivy — License Compliance"
+              echo '```'
+              cat trivy-license.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  sbom:
+    name: "Generate SBOM (CycloneDX)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Generate SBOM (trivy)"
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          format: cyclonedx
+          hide-progress: true
+          output: sbom.cdx.json
+
+      - name: "Upload SBOM artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          retention-days: 90
+
+      - name: "Publish summary"
+        run: |
+          {
+            echo "## 📋 SBOM (CycloneDX)"
+            echo "- Components: $(jq '.components | length' sbom.cdx.json)"
+            echo "- Spec version: $(jq -r '.specVersion' sbom.cdx.json)"
+            echo "- Download the full SBOM from this run's **Summary** page, under **Artifacts** (\`sbom\`)."
+          } >> "$GITHUB_STEP_SUMMARY"
