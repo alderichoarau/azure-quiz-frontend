@@ -44,7 +44,19 @@ jobs:
         run: npm ci
 
       - name: "Audit dependencies (high & critical)"
-        run: npm run security:audit
+        shell: bash
+        run: |
+          set +e
+          npm run security:audit 2>&1 | tee npm-audit.txt
+          STATUS=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "## 📦 npm audit"
+            echo '```'
+            cat npm-audit.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $STATUS
 
   trivy-vuln:
     name: "Trivy (dependency vulnerabilities)"
@@ -60,3 +72,17 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           exit-code: 1
+          hide-progress: true
+          output: trivy-sca.txt
+
+      - name: "Publish results to job summary"
+        if: always()
+        run: |
+          if [ -s trivy-sca.txt ]; then
+            {
+              echo "## 🛡️ Trivy — Dependency Vulnerabilities"
+              echo '```'
+              cat trivy-sca.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

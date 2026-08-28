@@ -41,6 +41,20 @@ jobs:
           scanners: misconfig
           severity: HIGH,CRITICAL
           exit-code: 1
+          hide-progress: true
+          output: trivy-iac.txt
+
+      - name: "Publish results to job summary"
+        if: always()
+        run: |
+          if [ -s trivy-iac.txt ]; then
+            {
+              echo "## 🛡️ Trivy — Dockerfile / Helm / nginx Misconfigurations"
+              echo '```'
+              cat trivy-iac.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   image-scan:
     name: "Trivy (built image CVEs)"
@@ -64,3 +78,17 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           exit-code: 1
+          hide-progress: true
+          output: trivy-image.txt
+
+      - name: "Publish results to job summary"
+        if: always()
+        run: |
+          if [ -s trivy-image.txt ]; then
+            {
+              echo "## 🛡️ Trivy — Built Image CVEs"
+              echo '```'
+              cat trivy-image.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

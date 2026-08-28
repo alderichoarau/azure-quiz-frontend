@@ -73,6 +73,7 @@ jobs:
           exit 1
 
       - name: "Run axe-core accessibility audit"
+        shell: bash
         run: |
           # axe-core/cli only adds --no-sandbox automatically when it launches
           # its own auto-detected Chrome binary; since we pass --chrome-path
@@ -80,8 +81,18 @@ jobs:
           # root on the runner without it (SessionNotCreatedError: Chrome
           # instance exited). disable-dev-shm-usage/disable-gpu avoid the
           # usual /dev/shm and GPU-less-container crashes on top of that.
+          set +e
           npx axe http://localhost:4200 \
             --chrome-path "${{ steps.setup-chrome.outputs.chrome-path }}" \
             --chromedriver-path "/tmp/chromedriver-linux64/chromedriver" \
             --chrome-options="no-sandbox,disable-dev-shm-usage,disable-gpu" \
-            --exit
+            --exit 2>&1 | tee axe-report.txt
+          STATUS=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "## ♿ Accessibility Audit (axe-core)"
+            echo '```'
+            cat axe-report.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $STATUS
