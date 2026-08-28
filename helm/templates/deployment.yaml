@@ -16,6 +16,13 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      securityContext:
+        # Makes the emptyDir volumes below writable by GID 101, matching the
+        # container's runAsUser/runAsGroup -- needed because
+        # readOnlyRootFilesystem (below) pushes nginx's usual writable paths
+        # (/var/cache/nginx, /run) out into volumes instead of the image's
+        # own (pre-chowned, but now read-only) root fs.
+        fsGroup: 101
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -43,3 +50,29 @@ spec:
             # worker processes as non-root -- the official nginx:alpine image
             # is already built to run as the "nginx" user for exactly this.
             runAsUser: 101
+            runAsGroup: 101
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            # nginx writes its temp/cache dirs and pid file at runtime (see
+            # Dockerfile comments on why those paths are pre-chowned to
+            # 101:101 at build time) -- readOnlyRootFilesystem above means
+            # they now have to live on a writable volume instead.
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
