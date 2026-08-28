@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { AdminApiService } from '../../../core/services/admin-api.service';
   imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './question-list.html',
   styleUrl: './question-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionList {
   private readonly route = inject(ActivatedRoute);

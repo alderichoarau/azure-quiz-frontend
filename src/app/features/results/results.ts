@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { QuizSessionStore } from '../../core/services/quiz-session.store';
   imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './results.html',
   styleUrl: './results.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Results {
   private readonly route = inject(ActivatedRoute);

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -29,6 +29,7 @@ import { InlineMarkdownPipe } from '../../shared/pipes/inline-markdown.pipe';
   ],
   templateUrl: './quiz.html',
   styleUrl: './quiz.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Quiz {
   private readonly route = inject(ActivatedRoute);

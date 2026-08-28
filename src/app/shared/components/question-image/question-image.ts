@@ -1,4 +1,12 @@
-import { Component, DestroyRef, Input, OnChanges, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnChanges,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 
 import { ImageApiService } from '../../../core/services/image-api.service';
 
@@ -32,9 +40,10 @@ import { ImageApiService } from '../../../core/services/image-api.service';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionImage implements OnChanges {
-  @Input({ required: true }) blockId!: string;
+  readonly blockId = input.required<string>();
 
   private readonly api = inject(ImageApiService);
 
@@ -48,7 +57,7 @@ export class QuestionImage implements OnChanges {
   ngOnChanges(): void {
     this.revoke();
     this.loadError.set(false);
-    this.api.getImage(this.blockId).subscribe({
+    this.api.getImage(this.blockId()).subscribe({
       next: blob => this.objectUrl.set(URL.createObjectURL(blob)),
       error: () => this.loadError.set(true),
     });

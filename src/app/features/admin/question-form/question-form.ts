@@ -1,4 +1,4 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +33,7 @@ import { InlineMarkdownPipe } from '../../../shared/pipes/inline-markdown.pipe';
   ],
   templateUrl: './question-form.html',
   styleUrl: './question-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionForm implements OnDestroy {
   private readonly route = inject(ActivatedRoute);

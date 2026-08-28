@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import { AdminKeyStore } from '../../../core/services/admin-key.store';
   imports: [RouterLink, RouterOutlet, MatButtonModule, MatIconModule, FormsModule, TranslatePipe],
   templateUrl: './admin-shell.html',
   styleUrl: './admin-shell.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminShell {
   private readonly store = inject(AdminKeyStore);

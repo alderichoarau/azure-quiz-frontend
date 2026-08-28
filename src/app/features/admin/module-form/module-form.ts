@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,6 +22,7 @@ import { QuizApiService } from '../../../core/services/quiz-api.service';
   ],
   templateUrl: './module-form.html',
   styleUrl: './module-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuleForm {
   private readonly route = inject(ActivatedRoute);

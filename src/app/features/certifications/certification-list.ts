@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -12,6 +12,7 @@ import { QuizApiService } from '../../core/services/quiz-api.service';
   imports: [RouterLink, MatIconModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './certification-list.html',
   styleUrl: './certification-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificationList {
   private readonly api = inject(QuizApiService);

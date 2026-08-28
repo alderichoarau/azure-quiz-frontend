@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +15,7 @@ import { QuizSessionStore } from '../../core/services/quiz-session.store';
   imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule, TranslatePipe],
   templateUrl: './module-list.html',
   styleUrl: './module-list.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuleList {
   private readonly api = inject(QuizApiService);
