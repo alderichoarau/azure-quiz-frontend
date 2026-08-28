@@ -1,0 +1,87 @@
+# -----------------------------------------------------------------------------------------------
+# Accessibility audit (not a security scan, but grouped with the others as a quality gate): runs
+# axe-core against the production build's landing route. Only the root route ("/") is audited --
+# the other routes (certifications, quiz, admin/*) depend on a live backend that doesn't exist in
+# CI, so they'd only render loading/error states here.
+# -----------------------------------------------------------------------------------------------
+name: "GitHub - Accessibility (a11y): axe-core Audit"
+run-name: Accessibility (a11y) - axe-core Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  a11y:
+    name: "Accessibility audit (axe-core)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v7
+
+      - name: "Setup Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "Build Angular app"
+        run: npm run build:prod
+
+      - name: "Setup Chrome"
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # axe-core's bundled ChromeDriver isn't guaranteed to match whatever
+      # Chrome version setup-chrome installs, so fetch the exact matching
+      # build from the official Chrome for Testing distribution instead.
+      - name: "Install matching ChromeDriver"
+        run: |
+          CHROME_VERSION=$("${{ steps.setup-chrome.outputs.chrome-path }}" --version | grep -oE '[0-9.]+' | head -1)
+          echo "Chrome version: $CHROME_VERSION"
+          curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip
+          unzip -o /tmp/chromedriver.zip -d /tmp
+          chmod +x /tmp/chromedriver-linux64/chromedriver
+
+      - name: "Serve production build"
+        run: npx http-server dist/azure-quiz-frontend/browser -p 4200 --silent &
+
+      - name: "Wait for server to be ready"
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4200 > /dev/null && exit 0
+            sleep 1
+          done
+          echo "Server never became ready" >&2
+          exit 1
+
+      - name: "Run axe-core accessibility audit"
+        run: |
+          # axe-core/cli only adds --no-sandbox automatically when it launches
+          # its own auto-detected Chrome binary; since we pass --chrome-path
+          # ourselves, it's skipped, and headless Chrome refuses to start as
+          # root on the runner without it (SessionNotCreatedError: Chrome
+          # instance exited). disable-dev-shm-usage/disable-gpu avoid the
+          # usual /dev/shm and GPU-less-container crashes on top of that.
+          npx axe http://localhost:4200 \
+            --chrome-path "${{ steps.setup-chrome.outputs.chrome-path }}" \
+            --chromedriver-path "/tmp/chromedriver-linux64/chromedriver" \
+            --chrome-options="no-sandbox,disable-dev-shm-usage,disable-gpu" \
+            --exit

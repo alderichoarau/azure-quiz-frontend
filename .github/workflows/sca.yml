@@ -1,0 +1,62 @@
+# -----------------------------------------------------------------------------------------------
+# SCA (Software Composition Analysis): looks for known CVEs in third-party dependencies.
+# Complements dependency-review.yml (which only diffs *new* deps introduced by a PR) and
+# Dependabot (continuous background monitoring) by checking the *current* lockfile on every run,
+# via two independent scanners:
+#   - npm audit          -- npm's own advisory database
+#   - Trivy (vuln, fs)   -- reads package-lock.json directly (no install needed), broader/faster
+#     vulnerability DB, same tool already used for secrets/container scanning in this repo.
+# -----------------------------------------------------------------------------------------------
+name: "GitHub - Security (SCA): Dependency Vulnerability Scan"
+run-name: Security (SCA) - Dependency Vulnerability Scan
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  npm-audit:
+    name: "npm audit"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Set up Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: "Install dependencies"
+        run: npm ci
+
+      - name: "Audit dependencies (high & critical)"
+        run: npm run security:audit
+
+  trivy-vuln:
+    name: "Trivy (dependency vulnerabilities)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+
+      - name: "Scan dependencies for known CVEs (trivy)"
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          exit-code: 1
