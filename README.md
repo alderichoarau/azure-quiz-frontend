@@ -12,8 +12,14 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 ![Prettier](https://img.shields.io/badge/Prettier-3.9-F7B93E?logo=prettier&logoColor=black)
 
 ## Last analysis
+
 [![CI · Build all](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml)
-[![GitHub - Sonar Cloud Analysis](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml)
+[![Security · SAST (SonarCloud)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml)
+[![Security · SCA](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sca.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sca.yml)
+[![Security · Secrets](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/secrets-scan.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/secrets-scan.yml)
+[![Security · Container & IaC](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/container.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/container.yml)
+[![Security · DAST (OWASP ZAP)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/dast.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/dast.yml)
+[![Accessibility · axe-core](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/a11y.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/a11y.yml)
 [![Deploy · Static Web Apps](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml)
 [![Deploy · AKS](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
@@ -24,13 +30,14 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 
 ## Stack
 
-- Angular 22 (standalone components, signals), Angular Material, ngx-translate (fr/en)
+- Angular 22 (standalone components, signals, zoneless change detection, `OnPush` everywhere),
+  Angular Material, ngx-translate (fr/en)
 - Vitest (Angular CLI 22 native test runner)
 - ESLint (`angular-eslint`) + Prettier, husky + lint-staged on pre-commit
 
 ## Run locally
 
-Prerequisites: Node 22+, and the backend (`azure-quiz-backend`) running on `http://localhost:8080`.
+Prerequisites: Node 26+ (see `.nvmrc`), and the backend (`azure-quiz-backend`) running on `http://localhost:8080`.
 
 ```bash
 npm install
@@ -44,7 +51,12 @@ npm test           # Vitest
 npm run test:coverage
 npm run lint
 npm run format:check
+npm run security:audit  # npm audit --audit-level=high
+npm run a11y             # axe-core against a running instance (npm start first, defaults to :4200)
 ```
+
+See `.github/workflows/` for the full set of automated checks (SAST, SCA, secrets, container/IaC,
+DAST, accessibility — badges above).
 
 ## Production build
 
@@ -69,7 +81,8 @@ secrets.
 
 `.github/workflows/swa-deploy.yml` builds the Angular app and deploys it to the Azure Static Web App
 provisioned by the infra repo. `public/staticwebapp.config.json` handles the SPA fallback (all non-file
-routes redirect to `index.html`) — it is copied as-is into the build output folder (`public/` = output root).
+routes redirect to `index.html`) and sets the same security headers (CSP, `X-Frame-Options`, etc.) as
+`nginx.conf` does for the AKS track — it is copied as-is into the build output folder (`public/` = output root).
 
 ### AKS
 
