@@ -9,8 +9,8 @@
 #   - license-scan -- flags non-permissive licenses, informational only until there's a policy
 #   - sbom         -- CycloneDX inventory, uploaded as a build artifact
 # -----------------------------------------------------------------------------------------------
-name: "GitHub - Security (SCA): Dependency Vulnerability Scan"
-run-name: Security (SCA) - Dependency Vulnerability Scan
+name: "Security (SCA) - Dependency Vulnerability Scan"
+run-name: Security (SCA) - Run Dependency Vulnerability Scan
 
 on:
   workflow_dispatch:

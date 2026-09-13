@@ -4,8 +4,8 @@
 # the other routes (certifications, quiz, admin/*) depend on a live backend that doesn't exist in
 # CI, so they'd only render loading/error states here.
 # -----------------------------------------------------------------------------------------------
-name: "GitHub - Accessibility (a11y): axe-core Audit"
-run-name: Accessibility (a11y) - axe-core Audit
+name: "Accessibility - axe-core Audit"
+run-name: Accessibility - Run axe-core Audit
 
 on:
   workflow_dispatch:

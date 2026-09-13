@@ -2,8 +2,8 @@
 # This workflow built the project on every pull request and on every manual trigger.
 # This workflow is used in pull request as a required check.
 # -----------------------------------------------------------------------------------------------
-name: GitHub - Build all
-run-name: Build all modules
+name: "CI - Lint, Test & Build"
+run-name: CI - Run Lint, Test & Build
 
 on:
   workflow_dispatch:

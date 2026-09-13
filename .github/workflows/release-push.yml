@@ -7,8 +7,8 @@
 # turn this into a `workflow_dispatch` choice input (nonprod/prod) instead of two fixed
 # `gh workflow run` calls below.
 # -----------------------------------------------------------------------------------------------
-name: GitHub - Push Release
-run-name: "${{ (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')) && format('Push release from #{0}', github.event.pull_request.number) || format('Skip: PR #{0} not a release merge', github.event.pull_request.number) }}"
+name: "Release - Publish"
+run-name: "${{ (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')) && format('Release - Publish from #{0}', github.event.pull_request.number) || format('Release - Skip: PR #{0} not a release merge', github.event.pull_request.number) }}"
 
 on:
   pull_request:

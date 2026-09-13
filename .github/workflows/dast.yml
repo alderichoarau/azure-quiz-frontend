@@ -17,8 +17,8 @@
 # fail_action/allow_issue_writing off: baseline scans are informational by default -- review the
 # "zap_scan" artifact instead. Flip fail_action once the report's been clean a few times.
 # -----------------------------------------------------------------------------------------------
-name: "GitHub - Security (DAST): OWASP ZAP Baseline Scan"
-run-name: Security (DAST) - OWASP ZAP Baseline Scan
+name: "Security (DAST) - OWASP ZAP Baseline Scan"
+run-name: Security (DAST) - Run OWASP ZAP Baseline Scan
 
 on:
   workflow_dispatch:

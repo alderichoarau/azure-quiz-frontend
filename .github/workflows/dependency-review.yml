@@ -1,4 +1,5 @@
-name: 'Dependency Review'
+name: "Security - Dependency Review"
+run-name: Security - Run Dependency Review
 
 on: [pull_request]
 

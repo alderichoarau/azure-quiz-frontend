@@ -5,8 +5,8 @@
 #   - image-scan    -- builds the image like aks-deploy.yml, scans it (OS + npm deps) for CVEs.
 #     Build args are dummy placeholders just to make the image buildable -- never deployed.
 # -----------------------------------------------------------------------------------------------
-name: "GitHub - Security (Container & IaC): Trivy Scan"
-run-name: Security (Container & IaC) - Trivy Scan
+name: "Security (Container & IaC): Trivy Scan"
+run-name: Security (Container & IaC) - Run Trivy Scan
 
 on:
   workflow_dispatch:

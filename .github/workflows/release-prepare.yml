@@ -6,8 +6,8 @@
 # release goes out) is what actually creates the tag/release/deploy — see release-push.yml,
 # triggered by that merge.
 # -----------------------------------------------------------------------------------------------
-name: GitHub - Prepare Release
-run-name: Prepare release ${{ inputs.tag_name }}
+name: "Release - Prepare"
+run-name: Release - Prepare ${{ inputs.tag_name }}
 
 on:
   workflow_dispatch:
