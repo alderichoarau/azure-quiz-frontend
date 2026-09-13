@@ -1,31 +1,21 @@
 # -----------------------------------------------------------------------------------------------
 # DAST (Dynamic Application Security Testing): attacks the *running* app from the outside, unlike
-# every other scan in this repo which reads source/config without executing it. Runs OWASP ZAP's
-# baseline scan (passive checks only -- no active/aggressive attack payloads) against the
-# production build served locally.
+# every other scan here which only reads source/config. Runs OWASP ZAP's baseline scan (passive
+# only) against the production build served locally.
 #
-# Signal is intentionally limited here: there's no live backend in CI, so this mostly checks
-# response/security headers and passive page checks on the static bundle nginx would serve, not
-# real business-logic surfaces (those need a deployed nonprod environment to test against
-# meaningfully -- worth revisiting once one is reliably reachable from CI).
+# Signal is limited: no live backend in CI, so this mostly checks headers/passive page behavior,
+# not real business logic.
 #
-# KNOWN GAP: the target below is served by `http-server` directly on the raw `ng build` output,
-# not through the actual nginx image (Dockerfile/nginx.conf). This is faster/simpler but means ZAP
-# will permanently flag missing security headers (clickjacking, X-Content-Type-Options, CSP,
-# Permissions-Policy) here even though nginx.conf and staticwebapp.config.json both already set
-# them for the real deployments -- a known false signal, not a real gap in prod. Switching this job
-# to build+run the actual Docker image (like container.yml's image-scan job) would close it, at
-# the cost of a slower job; deliberately left as-is for now.
+# KNOWN GAP: served via `http-server` on the raw `ng build` output, not the real nginx image --
+# ZAP will permanently flag missing security headers here even though nginx.conf/
+# staticwebapp.config.json already set them for real deployments. Building+running the actual
+# Docker image (like container.yml) would close this, at the cost of a slower job; left as-is.
 #
-# Runs on push to main + manual dispatch only, not on every PR: a full ZAP baseline pass (image
-# pull + scan) is the slowest job of the security suite, and its value on a not-yet-deployed
-# branch is marginal. Switch to `pull_request` triggers too if you'd rather get this signal
-# pre-merge.
+# Runs on push to main + manual dispatch only, not on every PR: the slowest job in the suite, and
+# its value pre-deploy is marginal. Add `pull_request` if you want this signal pre-merge.
 #
-# fail_action / allow_issue_writing are both explicitly off -- baseline scans are informational by
-# default (avoids blocking merges or filing an issue on every run); review the uploaded
-# "zap_scan" artifact instead. Flip fail_action to true once the report's been reviewed a few
-# times and looks clean, to make this a real gate.
+# fail_action/allow_issue_writing off: baseline scans are informational by default -- review the
+# "zap_scan" artifact instead. Flip fail_action once the report's been clean a few times.
 # -----------------------------------------------------------------------------------------------
 name: "GitHub - Security (DAST): OWASP ZAP Baseline Scan"
 run-name: Security (DAST) - OWASP ZAP Baseline Scan
@@ -82,11 +72,9 @@ jobs:
           target: "http://localhost:4200"
           fail_action: false
           allow_issue_writing: false
-          # No cmd_options here: the action already writes report_html.html /
-          # report_md.md / report_json.json by default. Overriding those names
-          # via -r/-w/-J broke the action's own finalize/artifact-upload step,
-          # which looks for these exact default filenames regardless of what
-          # cmd_options requests -- hit live ("report_md.md does not exist").
+          # No cmd_options: this action already writes report_html.html/report_md.md/
+          # report_json.json by default. Renaming them via -r/-w/-J broke the artifact-upload
+          # step -- hit live ("report_md.md does not exist").
 
       - name: "Publish alert summary to job summary"
         if: always()
@@ -99,9 +87,8 @@ jobs:
           {
             echo "## 🔍 OWASP ZAP Baseline — Summary of Alerts"
             echo
-            # Slice out just the "Summary of Alerts" section (a heading + its
-            # table) from the full report -- everything up to the next
-            # level-2 heading (e.g. "## Alert Detail").
+            # Slice out the "Summary of Alerts" section -- everything up to the next level-2
+            # heading (e.g. "## Alert Detail").
             SUMMARY=$(awk '
               /^## Summary of Alerts/ { found=1 }
               found && /^## / && !/^## Summary of Alerts/ { exit }

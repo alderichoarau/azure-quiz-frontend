@@ -1,17 +1,13 @@
 # -----------------------------------------------------------------------------------------------
 # SCA (Software Composition Analysis): looks for known CVEs in third-party dependencies.
-# Complements dependency-review.yml (which only diffs *new* deps introduced by a PR) and
-# Dependabot (continuous background monitoring) by checking the *current* lockfile on every run,
-# via two independent scanners:
-#   - npm audit          -- npm's own advisory database
-#   - Trivy (vuln, fs)   -- reads package-lock.json directly (no install needed), broader/faster
-#     vulnerability DB, same tool already used for secrets/container scanning in this repo.
+# Complements dependency-review.yml (diffs only new PR deps) and Dependabot (background
+# monitoring) by checking the *current* lockfile every run, via two scanners:
+#   - npm audit -- npm's own advisory database
+#   - Trivy     -- broader/faster DB, reads package-lock.json directly, no install needed
 #
-# Also generates two compliance/inventory artifacts, both scoped to production `dependencies`
-# only (Trivy suppresses devDependencies by default, matching what actually ships in the bundle):
-#   - license-scan -- flags non-permissive licenses. Informational only (no exit-code set, so it
-#     never blocks a merge) until there's an explicit allow/deny policy to enforce against.
-#   - sbom         -- CycloneDX component inventory, uploaded as a build artifact.
+# Also generates compliance artifacts (production deps only, devDependencies excluded):
+#   - license-scan -- flags non-permissive licenses, informational only until there's a policy
+#   - sbom         -- CycloneDX inventory, uploaded as a build artifact
 # -----------------------------------------------------------------------------------------------
 name: "GitHub - Security (SCA): Dependency Vulnerability Scan"
 run-name: Security (SCA) - Dependency Vulnerability Scan
@@ -107,9 +103,8 @@ jobs:
           scanners: license
           hide-progress: true
           output: trivy-license.txt
-          # No exit-code set (defaults to 0) -- informational, doesn't block
-          # merges. Flip this once there's an explicit allow/deny license
-          # policy to actually enforce.
+          # No exit-code set (defaults to 0) -- informational only until there's an explicit
+          # allow/deny license policy to enforce.
 
       - name: "Publish results to job summary"
         if: always()

@@ -17,11 +17,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       securityContext:
-        # Makes the emptyDir volumes below writable by GID 101, matching the
-        # container's runAsUser/runAsGroup -- needed because
-        # readOnlyRootFilesystem (below) pushes nginx's usual writable paths
-        # (/var/cache/nginx, /run) out into volumes instead of the image's
-        # own (pre-chowned, but now read-only) root fs.
+        # Makes the emptyDir volumes below writable by GID 101 -- readOnlyRootFilesystem (below)
+        # pushes nginx's usual writable paths (/var/cache/nginx, /run) out of the image's own
+        # now-read-only root fs.
         fsGroup: 101
       containers:
         - name: {{ .Chart.Name }}
@@ -59,10 +57,8 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
-            # nginx writes its temp/cache dirs and pid file at runtime (see
-            # Dockerfile comments on why those paths are pre-chowned to
-            # 101:101 at build time) -- readOnlyRootFilesystem above means
-            # they now have to live on a writable volume instead.
+            # nginx's temp/cache/pid files (see Dockerfile) now need a writable volume instead
+            # of the image's read-only root fs.
             - name: nginx-cache
               mountPath: /var/cache/nginx
             - name: nginx-run

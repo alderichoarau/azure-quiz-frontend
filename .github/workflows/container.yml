@@ -1,12 +1,9 @@
 # -----------------------------------------------------------------------------------------------
-# Container & IaC security: this repo (unlike a plain static site) ships a real Dockerfile + Helm
-# chart (AKS track, see aks-deploy.yml), so both the infra-as-code definitions and the built image
-# itself are worth scanning:
-#   - iac-misconfig -- Trivy's misconfig scanner over Dockerfile / helm/ / nginx.conf (bad
-#     practices: running as root, missing resource limits, permissive defaults, ...)
-#   - image-scan    -- builds the image exactly like aks-deploy.yml does, then scans it (OS
-#     packages + baked-in npm deps) for known CVEs. Build args below are dummy placeholders used
-#     only to make the image buildable for scanning -- never deployed, no real secret involved.
+# Container & IaC: this repo (unlike a plain static site) ships a Dockerfile + Helm chart (AKS
+# track), so both the IaC definitions and the built image are worth scanning:
+#   - iac-misconfig -- Trivy's misconfig scanner over Dockerfile/helm/nginx.conf
+#   - image-scan    -- builds the image like aks-deploy.yml, scans it (OS + npm deps) for CVEs.
+#     Build args are dummy placeholders just to make the image buildable -- never deployed.
 # -----------------------------------------------------------------------------------------------
 name: "GitHub - Security (Container & IaC): Trivy Scan"
 run-name: Security (Container & IaC) - Trivy Scan

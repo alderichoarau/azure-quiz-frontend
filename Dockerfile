@@ -46,10 +46,8 @@ RUN npm run build:prod
 # ── Runtime stage ────────────────────────────────────────────────────────────
 FROM nginx:1.31-alpine
 
-# Pulls in patched Alpine packages (e.g. libssl3/libcrypto3) that landed
-# upstream after this base image tag was last published -- trivy's image
-# scan (container.yml) flags these otherwise. --no-cache skips storing the
-# package index, keeping the layer small.
+# Pulls in patched Alpine packages (libssl3/libcrypto3 CVEs found by container.yml's image
+# scan) that landed after this base image tag was published. --no-cache keeps the layer small.
 RUN apk update && apk upgrade --no-cache
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
