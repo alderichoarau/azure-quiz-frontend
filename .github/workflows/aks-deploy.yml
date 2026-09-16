@@ -17,10 +17,8 @@ on:
       environment:
         description: "Target environment (matches the `environment` tag set by Terraform)"
         required: true
-        type: choice
-        options:
-          - nonprod
-          - prod
+        type: environment
+        default: nonprod
 
 permissions:
   id-token: write
