@@ -4,9 +4,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { CertificationSummary } from '../../../core/models/certification.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { QuizApiService } from '../../../core/services/quiz-api.service';
+import { CertificationSummary } from '@core/models/certification.model';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { QuizApiService } from '@core/services/quiz-api.service';
 import { CertificationForm } from './certification-form';
 
 const certifications: CertificationSummary[] = [

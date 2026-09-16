@@ -6,9 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { CertificationSummary } from '../../../core/models/certification.model';
-import { QuizApiService } from '../../../core/services/quiz-api.service';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { CertificationSummary } from '@core/models/certification.model';
+import { QuizApiService } from '@core/services/quiz-api.service';
 
 @Component({
   selector: 'app-certification-form',

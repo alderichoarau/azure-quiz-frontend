@@ -3,9 +3,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Person } from '../../../core/models/person.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { QuizApiService } from '../../../core/services/quiz-api.service';
+import { Person } from '@core/models/person.model';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { QuizApiService } from '@core/services/quiz-api.service';
 import { ParticipantList } from './participant-list';
 
 const people: Person[] = [

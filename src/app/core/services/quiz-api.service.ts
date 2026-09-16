@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import { CertificationSummary } from '../models/certification.model';
 import { ModuleSummary } from '../models/module.model';
 import { Person } from '../models/person.model';

@@ -4,7 +4,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { describe, expect, it, vi } from 'vitest';
 
-import { AdminKeyStore } from '../../../core/services/admin-key.store';
+import { AdminKeyStore } from '@core/services/admin-key.store';
 import { AdminShell } from './admin-shell';
 
 function setup(storeOverrides: Record<string, unknown> = {}) {

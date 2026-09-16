@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 
 /**
  * Attaches the shared `X-Api-Key` header to requests going to the backend API.

@@ -4,9 +4,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import { QuizResult } from '../../core/models/quiz.model';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { QuizResult } from '@core/models/quiz.model';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
 import { Results } from './results';
 
 const result: QuizResult = {

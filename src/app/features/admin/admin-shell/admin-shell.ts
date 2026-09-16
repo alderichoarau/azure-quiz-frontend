@@ -6,7 +6,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { AdminKeyStore } from '../../../core/services/admin-key.store';
+import { AdminKeyStore } from '@core/services/admin-key.store';
 
 /**
  * Parent shell for every `/admin/**` route. Gates access behind an admin key typed once and kept

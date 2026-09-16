@@ -5,9 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { Person } from '../../../core/models/person.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { QuizApiService } from '../../../core/services/quiz-api.service';
+import { Person } from '@core/models/person.model';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { QuizApiService } from '@core/services/quiz-api.service';
 
 @Component({
   selector: 'app-participant-list',

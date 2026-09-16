@@ -4,8 +4,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { PersonStats } from '../../../core/models/admin.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
+import { PersonStats } from '@core/models/admin.model';
+import { AdminApiService } from '@core/services/admin-api.service';
 
 @Component({
   selector: 'app-admin-stats',

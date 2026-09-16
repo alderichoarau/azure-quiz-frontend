@@ -5,9 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { QuizResult } from '../../core/models/quiz.model';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { QuizResult } from '@core/models/quiz.model';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
 
 @Component({
   selector: 'app-results',

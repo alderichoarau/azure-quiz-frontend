@@ -6,9 +6,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import { AdminQuestionDetail } from '../../../core/models/admin.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { ImageApiService } from '../../../core/services/image-api.service';
+import { AdminQuestionDetail } from '@core/models/admin.model';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { ImageApiService } from '@core/services/image-api.service';
 import { QuestionForm } from './question-form';
 
 function setup(

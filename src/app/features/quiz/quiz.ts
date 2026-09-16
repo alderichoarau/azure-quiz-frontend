@@ -8,12 +8,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { CreateQuizSessionRequest } from '../../core/models/quiz.model';
-import { PersonSelectionStore } from '../../core/services/person-selection.store';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
-import { QuestionImage } from '../../shared/components/question-image/question-image';
-import { InlineMarkdownPipe } from '../../shared/pipes/inline-markdown.pipe';
+import { CreateQuizSessionRequest } from '@core/models/quiz.model';
+import { PersonSelectionStore } from '@core/services/person-selection.store';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
+import { QuestionImage } from '@shared/components/question-image/question-image';
+import { InlineMarkdownPipe } from '@shared/pipes/inline-markdown.pipe';
 
 @Component({
   selector: 'app-quiz',

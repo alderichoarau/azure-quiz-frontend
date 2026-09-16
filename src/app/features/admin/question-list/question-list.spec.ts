@@ -4,8 +4,8 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AdminQuestionSummary } from '../../../core/models/admin.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
+import { AdminQuestionSummary } from '@core/models/admin.model';
+import { AdminApiService } from '@core/services/admin-api.service';
 import { QuestionList } from './question-list';
 
 const questions: AdminQuestionSummary[] = [

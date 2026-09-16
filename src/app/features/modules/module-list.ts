@@ -5,12 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ModuleSummary } from '../../core/models/module.model';
-import { Person } from '../../core/models/person.model';
-import { CreateQuizSessionRequest, QuizSession } from '../../core/models/quiz.model';
-import { PersonSelectionStore } from '../../core/services/person-selection.store';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { ModuleSummary } from '@core/models/module.model';
+import { Person } from '@core/models/person.model';
+import { CreateQuizSessionRequest, QuizSession } from '@core/models/quiz.model';
+import { PersonSelectionStore } from '@core/services/person-selection.store';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
 
 @Component({
   selector: 'app-module-list',

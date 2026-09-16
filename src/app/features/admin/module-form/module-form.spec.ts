@@ -4,9 +4,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ModuleSummary } from '../../../core/models/module.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
-import { QuizApiService } from '../../../core/services/quiz-api.service';
+import { ModuleSummary } from '@core/models/module.model';
+import { AdminApiService } from '@core/services/admin-api.service';
+import { QuizApiService } from '@core/services/quiz-api.service';
 import { ModuleForm } from './module-form';
 
 const existingModule: ModuleSummary = {

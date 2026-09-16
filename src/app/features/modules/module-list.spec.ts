@@ -5,12 +5,12 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ModuleSummary } from '../../core/models/module.model';
-import { Person } from '../../core/models/person.model';
-import { QuizSession } from '../../core/models/quiz.model';
-import { PersonSelectionStore } from '../../core/services/person-selection.store';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { ModuleSummary } from '@core/models/module.model';
+import { Person } from '@core/models/person.model';
+import { QuizSession } from '@core/models/quiz.model';
+import { PersonSelectionStore } from '@core/services/person-selection.store';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
 import { ModuleList } from './module-list';
 
 const modules: ModuleSummary[] = [

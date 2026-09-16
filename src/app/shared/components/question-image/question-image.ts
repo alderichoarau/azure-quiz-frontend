@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 
-import { ImageApiService } from '../../../core/services/image-api.service';
+import { ImageApiService } from '@core/services/image-api.service';
 
 /**
  * Renders one IMAGE content block. Fetches the bytes through `ImageApiService` (so the

@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import { CertificationSummary } from '../models/certification.model';
 import { ModuleSummary } from '../models/module.model';
 import { Person } from '../models/person.model';

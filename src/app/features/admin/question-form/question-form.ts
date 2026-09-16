@@ -7,7 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, map, Observable, of } from 'rxjs';
 
-import { AdminApiService } from '../../../core/services/admin-api.service';
+import { AdminApiService } from '@core/services/admin-api.service';
 import {
   CreateAnswerOptionRequest,
   CreateContentBlockRequest,
@@ -15,10 +15,10 @@ import {
   DraftAnswerOption,
   DraftContentBlock,
   QuestionCreatedDto,
-} from '../../../core/models/admin.model';
-import { QuestionType } from '../../../core/models/quiz.model';
-import { ImageApiService } from '../../../core/services/image-api.service';
-import { InlineMarkdownPipe } from '../../../shared/pipes/inline-markdown.pipe';
+} from '@core/models/admin.model';
+import { QuestionType } from '@core/models/quiz.model';
+import { ImageApiService } from '@core/services/image-api.service';
+import { InlineMarkdownPipe } from '@shared/pipes/inline-markdown.pipe';
 
 @Component({
   selector: 'app-question-form',

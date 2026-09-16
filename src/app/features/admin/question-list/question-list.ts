@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { AdminQuestionSummary } from '../../../core/models/admin.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
+import { AdminQuestionSummary } from '@core/models/admin.model';
+import { AdminApiService } from '@core/services/admin-api.service';
 
 @Component({
   selector: 'app-question-list',

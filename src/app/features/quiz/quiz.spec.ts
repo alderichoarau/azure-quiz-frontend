@@ -5,11 +5,11 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import { QuizSession } from '../../core/models/quiz.model';
-import { ImageApiService } from '../../core/services/image-api.service';
-import { PersonSelectionStore } from '../../core/services/person-selection.store';
-import { QuizApiService } from '../../core/services/quiz-api.service';
-import { QuizSessionStore } from '../../core/services/quiz-session.store';
+import { QuizSession } from '@core/models/quiz.model';
+import { ImageApiService } from '@core/services/image-api.service';
+import { PersonSelectionStore } from '@core/services/person-selection.store';
+import { QuizApiService } from '@core/services/quiz-api.service';
+import { QuizSessionStore } from '@core/services/quiz-session.store';
 import { Quiz } from './quiz';
 
 const session: QuizSession = {

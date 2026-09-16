@@ -3,8 +3,8 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 
-import { PersonStats } from '../../../core/models/admin.model';
-import { AdminApiService } from '../../../core/services/admin-api.service';
+import { PersonStats } from '@core/models/admin.model';
+import { AdminApiService } from '@core/services/admin-api.service';
 import { Stats } from './stats';
 
 const stats: PersonStats[] = [

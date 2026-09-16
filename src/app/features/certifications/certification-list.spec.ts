@@ -4,8 +4,8 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 
-import { CertificationSummary } from '../../core/models/certification.model';
-import { QuizApiService } from '../../core/services/quiz-api.service';
+import { CertificationSummary } from '@core/models/certification.model';
+import { QuizApiService } from '@core/services/quiz-api.service';
 import { CertificationList } from './certification-list';
 
 const certifications: CertificationSummary[] = [

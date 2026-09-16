@@ -2,7 +2,7 @@ import { HttpRequest, HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import { apiKeyInterceptor } from './api-key.interceptor';
 
 // environment is a plain mutable object (no `as const`/Object.freeze), so
