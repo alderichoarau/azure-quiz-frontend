@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -5,7 +6,9 @@ import { of } from 'rxjs';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ModuleSummary } from '../../core/models/module.model';
+import { Person } from '../../core/models/person.model';
 import { QuizSession } from '../../core/models/quiz.model';
+import { PersonSelectionStore } from '../../core/services/person-selection.store';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
 import { ModuleList } from './module-list';
@@ -30,9 +33,12 @@ const session: QuizSession = {
   questions: [],
 };
 
+const people: Person[] = [{ id: 'person-1', name: 'Alice' }];
+
 function setup(apiOverrides: Partial<QuizApiService> = {}) {
   const navigate = vi.fn();
   const start = vi.fn();
+  const personStore = { personId: signal<string | null>('person-1'), set: vi.fn(), clear: vi.fn() };
 
   TestBed.configureTestingModule({
     imports: [ModuleList],
@@ -44,10 +50,12 @@ function setup(apiOverrides: Partial<QuizApiService> = {}) {
       },
       { provide: Router, useValue: { navigate } },
       { provide: QuizSessionStore, useValue: { start } },
+      { provide: PersonSelectionStore, useValue: personStore },
       {
         provide: QuizApiService,
         useValue: {
           getModules: () => of(modules),
+          getPeople: () => of(people),
           createSession: () => of(session),
           ...apiOverrides,
         },

@@ -9,6 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { CreateQuizSessionRequest } from '../../core/models/quiz.model';
+import { PersonSelectionStore } from '../../core/services/person-selection.store';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
 import { QuestionImage } from '../../shared/components/question-image/question-image';
@@ -36,6 +37,7 @@ export class Quiz {
   private readonly router = inject(Router);
   private readonly api = inject(QuizApiService);
   private readonly store = inject(QuizSessionStore);
+  private readonly personStore = inject(PersonSelectionStore);
 
   readonly loading = signal(true);
   readonly loadError = signal(false);
@@ -66,9 +68,18 @@ export class Quiz {
       return;
     }
 
+    // Direct/refreshed navigation without an in-memory session (e.g. page reload) has to
+    // re-create one here -- if no person was ever picked, send back to ModuleList's selector
+    // rather than fail the create-session call with a missing personId.
+    const personId = this.personStore.personId();
+    if (!personId) {
+      this.router.navigate(['/certifications', certificationId]);
+      return;
+    }
+
     const request: CreateQuizSessionRequest = moduleId
-      ? { mode: 'MODULE', moduleId }
-      : { mode: 'EXAM', certificationId };
+      ? { mode: 'MODULE', moduleId, personId }
+      : { mode: 'EXAM', certificationId, personId };
 
     this.api.createSession(request).subscribe({
       next: session => {

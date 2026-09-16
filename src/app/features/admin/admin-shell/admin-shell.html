@@ -14,7 +14,38 @@
       {{ 'admin.signOut' | translate }}
     </button>
   </div>
-  <router-outlet />
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="admin-nav">
+    <a
+      mat-tab-link
+      routerLink="/admin/certifications"
+      routerLinkActive
+      #certLink="routerLinkActive"
+      [active]="certLink.isActive"
+    >
+      {{ 'admin.nav.certifications' | translate }}
+    </a>
+    <a
+      mat-tab-link
+      routerLink="/admin/participants"
+      routerLinkActive
+      #peopleLink="routerLinkActive"
+      [active]="peopleLink.isActive"
+    >
+      {{ 'admin.nav.participants' | translate }}
+    </a>
+    <a
+      mat-tab-link
+      routerLink="/admin/stats"
+      routerLinkActive
+      #statsLink="routerLinkActive"
+      [active]="statsLink.isActive"
+    >
+      {{ 'admin.nav.stats' | translate }}
+    </a>
+  </nav>
+  <mat-tab-nav-panel #tabPanel>
+    <router-outlet />
+  </mat-tab-nav-panel>
 } @else {
   <div class="gate">
     <mat-icon class="gate-icon">lock</mat-icon>

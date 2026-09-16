@@ -8,11 +8,14 @@ import {
   AdminQuestionSummary,
   CreateCertificationRequest,
   CreateModuleRequest,
+  CreatePersonRequest,
   CreateQuestionRequest,
+  PersonStats,
   QuestionCreatedDto,
 } from '../models/admin.model';
 import { CertificationSummary } from '../models/certification.model';
 import { ModuleSummary } from '../models/module.model';
+import { Person } from '../models/person.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
@@ -79,6 +82,18 @@ export class AdminApiService {
 
   deleteQuestion(questionId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/questions/${questionId}`);
+  }
+
+  createPerson(request: CreatePersonRequest): Observable<Person> {
+    return this.http.post<Person>(`${this.baseUrl}/people`, request);
+  }
+
+  deletePerson(personId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/people/${personId}`);
+  }
+
+  getPeopleStats(): Observable<PersonStats[]> {
+    return this.http.get<PersonStats[]>(`${this.baseUrl}/stats/people`);
   }
 }
 

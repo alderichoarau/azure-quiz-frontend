@@ -21,7 +21,14 @@
     "contentTitle": "Modules",
     "questionCount": "{{count}} question",
     "questionCountPlural": "{{count}} questions",
-    "start": "Start"
+    "start": "Start",
+    "person": {
+      "currentPrefix": "You are:",
+      "change": "Change",
+      "selectLabel": "Who are you?",
+      "placeholder": "Choose your name…",
+      "noPeople": "No registered participant yet — ask a trainer to add you."
+    }
   },
   "quiz": {
     "question": "Question {{current}} / {{total}}",
@@ -44,6 +51,29 @@
     "enterKeyHint": "Enter the admin key to add certifications, modules and questions.",
     "keyPlaceholder": "Admin key",
     "enter": "Enter",
+    "nav": {
+      "certifications": "Certifications",
+      "participants": "Participants",
+      "stats": "Stats"
+    },
+    "people": {
+      "title": "Participants",
+      "subtitle": "Manage the list of people who can take quizzes",
+      "newTitle": "Add a participant",
+      "name": "Name",
+      "submit": "Add",
+      "existing": "Existing participants",
+      "empty": "No participants yet.",
+      "delete": "Delete",
+      "deleteConfirm": "Delete \"{{name}}\"? Their session history is kept but no longer attributed to them."
+    },
+    "stats": {
+      "title": "Stats",
+      "subtitle": "Success rate per participant, overall and per module",
+      "empty": "No participants yet.",
+      "noAnswers": "No quiz taken yet",
+      "answeredDetail": "{{correct}} / {{total}} correct answers"
+    },
     "validation": {
       "requiredFields": "Please fill in all required fields.",
       "noTextBlock": "The question needs at least one non-empty text block.",

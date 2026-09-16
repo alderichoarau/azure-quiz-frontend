@@ -4,8 +4,10 @@ import { routes } from './app.routes';
 import { AdminShell } from './features/admin/admin-shell/admin-shell';
 import { CertificationForm } from './features/admin/certification-form/certification-form';
 import { ModuleForm } from './features/admin/module-form/module-form';
+import { ParticipantList } from './features/admin/participant-list/participant-list';
 import { QuestionForm } from './features/admin/question-form/question-form';
 import { QuestionList } from './features/admin/question-list/question-list';
+import { Stats } from './features/admin/stats/stats';
 import { CertificationList } from './features/certifications/certification-list';
 import { ModuleList } from './features/modules/module-list';
 import { Quiz } from './features/quiz/quiz';
@@ -36,6 +38,8 @@ describe('routes', () => {
       'certifications/:certificationId/modules/:moduleId/questions',
       'certifications/:certificationId/modules/:moduleId/questions/new',
       'certifications/:certificationId/modules/:moduleId/questions/:questionId/edit',
+      'participants',
+      'stats',
     ]);
     expect(children.find(c => c.path === '')?.redirectTo).toBe('certifications');
     expect(
@@ -65,6 +69,10 @@ describe('routes', () => {
         )
         ?.loadComponent?.()
     ).toBe(QuestionForm);
+    expect(
+      await children.find(c => c.path === 'participants')?.loadComponent?.()
+    ).toBe(ParticipantList);
+    expect(await children.find(c => c.path === 'stats')?.loadComponent?.()).toBe(Stats);
   });
 
   it('lazy-loads the certification list at the root path', async () => {

@@ -35,6 +35,7 @@ export interface CreateQuizSessionRequest {
   certificationId?: string;
   moduleId?: string;
   questionCount?: number;
+  personId: string;
 }
 
 export interface SubmitAnswerRequest {

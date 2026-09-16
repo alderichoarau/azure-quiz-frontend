@@ -6,7 +6,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { ModuleSummary } from '../../core/models/module.model';
+import { Person } from '../../core/models/person.model';
 import { CreateQuizSessionRequest, QuizSession } from '../../core/models/quiz.model';
+import { PersonSelectionStore } from '../../core/services/person-selection.store';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
 
@@ -20,6 +22,7 @@ import { QuizSessionStore } from '../../core/services/quiz-session.store';
 export class ModuleList {
   private readonly api = inject(QuizApiService);
   private readonly store = inject(QuizSessionStore);
+  private readonly personStore = inject(PersonSelectionStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -29,6 +32,10 @@ export class ModuleList {
   readonly loadError = signal(false);
   readonly starting = signal(false);
   readonly startError = signal(false);
+
+  readonly people = signal<Person[]>([]);
+  readonly selectedPersonId = this.personStore.personId;
+  readonly changingPerson = signal(false);
 
   readonly contentModules = computed(() => this.modules().filter(m => m.type === 'CONTENT'));
   readonly mockExamModules = computed(() => this.modules().filter(m => m.type === 'MOCK_EXAM'));
@@ -44,14 +51,40 @@ export class ModuleList {
         this.loading.set(false);
       },
     });
+    this.api.getPeople().subscribe({ next: people => this.people.set(people) });
+    if (!this.selectedPersonId()) {
+      this.changingPerson.set(true);
+    }
+  }
+
+  selectedPersonName(): string | null {
+    const id = this.selectedPersonId();
+    return id ? (this.people().find(p => p.id === id)?.name ?? null) : null;
+  }
+
+  onPersonChange(personId: string): void {
+    if (personId) {
+      this.personStore.set(personId);
+      this.changingPerson.set(false);
+    }
   }
 
   startModuleQuiz(moduleId: string): void {
-    this.startSession({ mode: 'MODULE', moduleId });
+    const personId = this.selectedPersonId();
+    if (!personId) {
+      this.changingPerson.set(true);
+      return;
+    }
+    this.startSession({ mode: 'MODULE', moduleId, personId });
   }
 
   startExam(): void {
-    this.startSession({ mode: 'EXAM', certificationId: this.certificationId });
+    const personId = this.selectedPersonId();
+    if (!personId) {
+      this.changingPerson.set(true);
+      return;
+    }
+    this.startSession({ mode: 'EXAM', certificationId: this.certificationId, personId });
   }
 
   private startSession(request: CreateQuizSessionRequest): void {

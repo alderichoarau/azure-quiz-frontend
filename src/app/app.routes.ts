@@ -54,6 +54,17 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/question-form/question-form').then(m => m.QuestionForm),
       },
+      {
+        path: 'participants',
+        loadComponent: () =>
+          import('./features/admin/participant-list/participant-list').then(
+            m => m.ParticipantList
+          ),
+      },
+      {
+        path: 'stats',
+        loadComponent: () => import('./features/admin/stats/stats').then(m => m.Stats),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -1,0 +1,49 @@
+<header class="page-header">
+  <h1>{{ 'admin.stats.title' | translate }}</h1>
+  <p class="page-subtitle">{{ 'admin.stats.subtitle' | translate }}</p>
+</header>
+
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (loadError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+} @else if (stats().length === 0) {
+  <p class="empty-hint">{{ 'admin.stats.empty' | translate }}</p>
+} @else {
+  <div class="stats-list">
+    @for (person of stats(); track person.personId) {
+      <div class="person-stats-card">
+        <div class="person-stats-header">
+          <h3>{{ person.personName }}</h3>
+          @if (person.totalAnswers > 0) {
+            <span class="rate-value">{{ person.globalSuccessRate | number: '1.0-0' }}%</span>
+          } @else {
+            <span class="rate-empty">{{ 'admin.stats.noAnswers' | translate }}</span>
+          }
+        </div>
+
+        @if (person.totalAnswers > 0) {
+          <mat-progress-bar mode="determinate" [value]="person.globalSuccessRate" />
+          <p class="rate-detail">
+            {{
+              'admin.stats.answeredDetail'
+                | translate: { correct: person.correctAnswers, total: person.totalAnswers }
+            }}
+          </p>
+
+          <ul class="module-breakdown">
+            @for (module of person.byModule; track module.moduleId ?? module.moduleTitle) {
+              <li>
+                <span class="module-title">{{ module.moduleTitle }}</span>
+                <mat-progress-bar mode="determinate" [value]="module.successRate" />
+                <span class="module-rate">{{ module.successRate | number: '1.0-0' }}%</span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  </div>
+}

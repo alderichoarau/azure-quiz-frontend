@@ -76,6 +76,7 @@ describe('QuizApiService', () => {
       mode: 'MODULE',
       moduleId: 'mod-1',
       questionCount: 10,
+      personId: 'person-1',
     };
     const session: QuizSession = {
       sessionId: 'session-1',

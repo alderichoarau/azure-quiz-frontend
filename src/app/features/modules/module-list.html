@@ -5,6 +5,34 @@
 
 <h1>{{ 'modules.title' | translate }}</h1>
 
+<div class="person-bar">
+  @if (selectedPersonId() && !changingPerson()) {
+    <span class="person-current">
+      <mat-icon>person</mat-icon>
+      {{ 'modules.person.currentPrefix' | translate }} <strong>{{ selectedPersonName() }}</strong>
+    </span>
+    <button mat-button type="button" (click)="changingPerson.set(true)">
+      {{ 'modules.person.change' | translate }}
+    </button>
+  } @else {
+    <label class="person-select-label">
+      <span>{{ 'modules.person.selectLabel' | translate }}</span>
+      <select
+        class="person-select"
+        (change)="onPersonChange($any($event.target).value)"
+      >
+        <option value="" selected disabled>{{ 'modules.person.placeholder' | translate }}</option>
+        @for (person of people(); track person.id) {
+          <option [value]="person.id">{{ person.name }}</option>
+        }
+      </select>
+    </label>
+    @if (people().length === 0) {
+      <p class="person-empty-hint">{{ 'modules.person.noPeople' | translate }}</p>
+    }
+  }
+</div>
+
 <div class="exam-card">
   <div class="exam-icon">
     <mat-icon>bolt</mat-icon>
@@ -20,7 +48,7 @@
     mat-flat-button
     color="primary"
     class="exam-cta"
-    [disabled]="starting()"
+    [disabled]="starting() || !selectedPersonId()"
     (click)="startExam()"
   >
     {{ 'modules.start' | translate }}
@@ -59,7 +87,7 @@
             mat-stroked-button
             color="primary"
             class="module-cta"
-            [disabled]="starting() || module.questionCount === 0"
+            [disabled]="starting() || module.questionCount === 0 || !selectedPersonId()"
             (click)="startModuleQuiz(module.id)"
           >
             {{ 'modules.start' | translate }}
@@ -93,7 +121,7 @@
             mat-stroked-button
             color="primary"
             class="module-cta"
-            [disabled]="starting() || module.questionCount === 0"
+            [disabled]="starting() || module.questionCount === 0 || !selectedPersonId()"
             (click)="startModuleQuiz(module.id)"
           >
             {{ 'modules.start' | translate }}

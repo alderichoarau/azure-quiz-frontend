@@ -93,3 +93,25 @@ export interface DraftAnswerOption {
   label: string;
   correct: boolean;
 }
+
+export interface CreatePersonRequest {
+  name: string;
+}
+
+/** `moduleId` is null for the aggregate of a person's EXAM-mode sessions. */
+export interface ModuleSuccessRate {
+  moduleId: string | null;
+  moduleTitle: string;
+  totalAnswers: number;
+  correctAnswers: number;
+  successRate: number;
+}
+
+export interface PersonStats {
+  personId: string;
+  personName: string;
+  totalAnswers: number;
+  correctAnswers: number;
+  globalSuccessRate: number;
+  byModule: ModuleSuccessRate[];
+}

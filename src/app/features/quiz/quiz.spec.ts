@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -6,6 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { QuizSession } from '../../core/models/quiz.model';
 import { ImageApiService } from '../../core/services/image-api.service';
+import { PersonSelectionStore } from '../../core/services/person-selection.store';
 import { QuizApiService } from '../../core/services/quiz-api.service';
 import { QuizSessionStore } from '../../core/services/quiz-session.store';
 import { Quiz } from './quiz';
@@ -69,6 +71,10 @@ function setup(storeOverrides: Record<string, unknown> = {}, apiOverrides: Recor
       {
         provide: ImageApiService,
         useValue: { getImage: () => of(new Blob(['x'], { type: 'image/png' })) },
+      },
+      {
+        provide: PersonSelectionStore,
+        useValue: { personId: signal<string | null>('person-1'), set: vi.fn(), clear: vi.fn() },
       },
     ],
   });

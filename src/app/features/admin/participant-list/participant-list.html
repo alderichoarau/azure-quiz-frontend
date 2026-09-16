@@ -1,0 +1,52 @@
+<header class="page-header">
+  <h1>{{ 'admin.people.title' | translate }}</h1>
+  <p class="page-subtitle">{{ 'admin.people.subtitle' | translate }}</p>
+</header>
+
+<form class="admin-card" (ngSubmit)="submit()">
+  <h2>{{ 'admin.people.newTitle' | translate }}</h2>
+  <label class="field">
+    <span>{{ 'admin.people.name' | translate }}</span>
+    <input type="text" [(ngModel)]="name" name="name" />
+  </label>
+
+  @if (submitError(); as error) {
+    <p class="error">{{ error | translate }}</p>
+  }
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+    {{ 'admin.people.submit' | translate }}
+  </button>
+</form>
+
+<h2 class="section-title">{{ 'admin.people.existing' | translate }}</h2>
+
+@if (deleteError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+}
+
+@if (loading()) {
+  <div class="state-container">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (loadError()) {
+  <p class="error">{{ 'common.loadError' | translate }}</p>
+} @else if (people().length === 0) {
+  <p class="empty-hint">{{ 'admin.people.empty' | translate }}</p>
+} @else {
+  <div class="card-grid">
+    @for (person of people(); track person.id) {
+      <div class="person-card">
+        <span class="person-name">{{ person.name }}</span>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="deletePerson(person)"
+          [attr.aria-label]="'admin.people.delete' | translate"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+}

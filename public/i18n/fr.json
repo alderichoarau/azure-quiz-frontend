@@ -21,7 +21,14 @@
     "contentTitle": "Modules",
     "questionCount": "{{count}} question",
     "questionCountPlural": "{{count}} questions",
-    "start": "Commencer"
+    "start": "Commencer",
+    "person": {
+      "currentPrefix": "Vous êtes :",
+      "change": "Changer",
+      "selectLabel": "Qui êtes-vous ?",
+      "placeholder": "Choisir votre nom…",
+      "noPeople": "Aucun participant enregistré — demandez à un formateur de vous ajouter."
+    }
   },
   "quiz": {
     "question": "Question {{current}} / {{total}}",
@@ -44,6 +51,29 @@
     "enterKeyHint": "Saisissez la clé d'administration pour ajouter des certifications, modules et questions.",
     "keyPlaceholder": "Clé d'administration",
     "enter": "Entrer",
+    "nav": {
+      "certifications": "Certifications",
+      "participants": "Participants",
+      "stats": "Statistiques"
+    },
+    "people": {
+      "title": "Participants",
+      "subtitle": "Gérer la liste des personnes pouvant passer les quiz",
+      "newTitle": "Ajouter un participant",
+      "name": "Nom",
+      "submit": "Ajouter",
+      "existing": "Participants existants",
+      "empty": "Aucun participant pour le moment.",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer « {{name}} » ? Son historique de sessions sera conservé mais ne lui sera plus rattaché."
+    },
+    "stats": {
+      "title": "Statistiques",
+      "subtitle": "Taux de réussite par participant, global et par module",
+      "empty": "Aucun participant pour le moment.",
+      "noAnswers": "Aucun quiz passé",
+      "answeredDetail": "{{correct}} / {{total}} réponses correctes"
+    },
     "validation": {
       "requiredFields": "Merci de remplir tous les champs obligatoires.",
       "noTextBlock": "La question doit contenir au moins un bloc de texte non vide.",

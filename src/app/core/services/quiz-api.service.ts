@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CertificationSummary } from '../models/certification.model';
 import { ModuleSummary } from '../models/module.model';
+import { Person } from '../models/person.model';
 import {
   AnswerResult,
   CreateQuizSessionRequest,
@@ -26,6 +27,10 @@ export class QuizApiService {
     return this.http.get<ModuleSummary[]>(
       `${this.baseUrl}/certifications/${certificationId}/modules`
     );
+  }
+
+  getPeople(): Observable<Person[]> {
+    return this.http.get<Person[]>(`${this.baseUrl}/people`);
   }
 
   createSession(request: CreateQuizSessionRequest): Observable<QuizSession> {
