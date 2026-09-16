@@ -35,10 +35,14 @@ const session: QuizSession = {
 
 const people: Person[] = [{ id: 'person-1', name: 'Alice' }];
 
-function setup(apiOverrides: Partial<QuizApiService> = {}) {
+function setup(apiOverrides: Partial<QuizApiService> = {}, initialPersonId: string | null = 'person-1') {
   const navigate = vi.fn();
   const start = vi.fn();
-  const personStore = { personId: signal<string | null>('person-1'), set: vi.fn(), clear: vi.fn() };
+  const personStore = {
+    personId: signal<string | null>(initialPersonId),
+    set: vi.fn((id: string) => personStore.personId.set(id)),
+    clear: vi.fn(),
+  };
 
   TestBed.configureTestingModule({
     imports: [ModuleList],
@@ -65,7 +69,7 @@ function setup(apiOverrides: Partial<QuizApiService> = {}) {
 
   const fixture = TestBed.createComponent(ModuleList);
   fixture.detectChanges();
-  return { fixture, component: fixture.componentInstance, navigate, start };
+  return { fixture, component: fixture.componentInstance, navigate, start, personStore };
 }
 
 describe('ModuleList', () => {
@@ -98,5 +102,66 @@ describe('ModuleList', () => {
     component.startExam();
 
     expect(navigate).toHaveBeenCalledWith(['/certifications', 'cert-1', 'quiz', 'exam']);
+  });
+
+  it('opens the person selector on load when no person is selected', () => {
+    const { component } = setup({}, null);
+
+    expect(component.changingPerson()).toBe(true);
+  });
+
+  it('does not prompt for a person when one is already selected', () => {
+    const { component } = setup();
+
+    expect(component.changingPerson()).toBe(false);
+  });
+
+  it('resolves the selected person\'s display name from the roster', () => {
+    const { component } = setup();
+
+    expect(component.selectedPersonName()).toBe('Alice');
+  });
+
+  it('returns null for the display name when nothing is selected', () => {
+    const { component } = setup({}, null);
+
+    expect(component.selectedPersonName()).toBeNull();
+  });
+
+  it('selecting a person stores it and closes the selector', () => {
+    const { component, personStore } = setup({}, null);
+
+    component.onPersonChange('person-1');
+
+    expect(personStore.set).toHaveBeenCalledWith('person-1');
+    expect(component.changingPerson()).toBe(false);
+  });
+
+  it('ignores an empty selection change', () => {
+    const { component, personStore } = setup({}, null);
+
+    component.onPersonChange('');
+
+    expect(personStore.set).not.toHaveBeenCalled();
+  });
+
+  it('blocks starting a module quiz and opens the selector when no person is chosen', () => {
+    const createSession = vi.fn();
+    const { component } = setup({ createSession }, null);
+
+    component.startModuleQuiz('module-1');
+
+    expect(createSession).not.toHaveBeenCalled();
+    expect(component.changingPerson()).toBe(true);
+  });
+
+  it('blocks starting an exam and opens the selector when no person is chosen', () => {
+    const createSession = vi.fn();
+    const { component } = setup({ createSession }, null);
+
+    component.startExam();
+
+    expect(createSession).not.toHaveBeenCalled();
+    expect(component.changingPerson()).toBe(true);
   });
 });

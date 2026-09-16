@@ -30,7 +30,11 @@ const session: QuizSession = {
   ],
 };
 
-function setup(storeOverrides: Record<string, unknown> = {}, apiOverrides: Record<string, unknown> = {}) {
+function setup(
+  storeOverrides: Record<string, unknown> = {},
+  apiOverrides: Record<string, unknown> = {},
+  personId: string | null = 'person-1'
+) {
   const navigate = vi.fn();
 
   TestBed.configureTestingModule({
@@ -74,7 +78,7 @@ function setup(storeOverrides: Record<string, unknown> = {}, apiOverrides: Recor
       },
       {
         provide: PersonSelectionStore,
-        useValue: { personId: signal<string | null>('person-1'), set: vi.fn(), clear: vi.fn() },
+        useValue: { personId: signal<string | null>(personId), set: vi.fn(), clear: vi.fn() },
       },
     ],
   });
@@ -101,6 +105,15 @@ describe('Quiz', () => {
     expect(start).not.toHaveBeenCalled();
     expect(createSession).not.toHaveBeenCalled();
     expect(component.loading()).toBe(false);
+  });
+
+  it('redirects to the certification page instead of creating a session when no person is selected', () => {
+    const createSession = vi.fn();
+    const { navigate, component } = setup({}, { createSession }, null);
+
+    expect(createSession).not.toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith(['/certifications', 'cert-1']);
+    expect(component.loading()).toBe(true);
   });
 
   it('replaces the single selection when toggling a single-choice option', () => {

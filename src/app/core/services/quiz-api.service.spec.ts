@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { environment } from '../../../environments/environment';
 import { CertificationSummary } from '../models/certification.model';
 import { ModuleSummary } from '../models/module.model';
+import { Person } from '../models/person.model';
 import {
   AnswerResult,
   CreateQuizSessionRequest,
@@ -69,6 +70,16 @@ describe('QuizApiService', () => {
     const req = httpMock.expectOne(`${baseUrl}/certifications/cert-1/modules`);
     expect(req.request.method).toBe('GET');
     req.flush(modules);
+  });
+
+  it('fetches the roster of people', () => {
+    const people: Person[] = [{ id: 'person-1', name: 'Alice' }];
+
+    service.getPeople().subscribe(result => expect(result).toEqual(people));
+
+    const req = httpMock.expectOne(`${baseUrl}/people`);
+    expect(req.request.method).toBe('GET');
+    req.flush(people);
   });
 
   it('creates a quiz session', () => {

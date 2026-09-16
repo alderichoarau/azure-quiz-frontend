@@ -4,8 +4,14 @@ import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { environment } from '../../../environments/environment';
-import { AdminQuestionDetail, AdminQuestionSummary, CreateModuleRequest } from '../models/admin.model';
+import {
+  AdminQuestionDetail,
+  AdminQuestionSummary,
+  CreateModuleRequest,
+  PersonStats,
+} from '../models/admin.model';
 import { ModuleSummary } from '../models/module.model';
+import { Person } from '../models/person.model';
 import { AdminApiService } from './admin-api.service';
 
 describe('AdminApiService', () => {
@@ -121,5 +127,43 @@ describe('AdminApiService', () => {
     const req = httpMock.expectOne(`${baseUrl}/questions/q1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+  });
+
+  it('creates a person', () => {
+    const created: Person = { id: 'person-1', name: 'Alice' };
+
+    service.createPerson({ name: 'Alice' }).subscribe(result => expect(result).toEqual(created));
+
+    const req = httpMock.expectOne(`${baseUrl}/people`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ name: 'Alice' });
+    req.flush(created);
+  });
+
+  it('deletes a person', () => {
+    service.deletePerson('person-1').subscribe();
+
+    const req = httpMock.expectOne(`${baseUrl}/people/person-1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
+  it('fetches per-person stats', () => {
+    const stats: PersonStats[] = [
+      {
+        personId: 'person-1',
+        personName: 'Alice',
+        totalAnswers: 10,
+        correctAnswers: 8,
+        globalSuccessRate: 80,
+        byModule: [],
+      },
+    ];
+
+    service.getPeopleStats().subscribe(result => expect(result).toEqual(stats));
+
+    const req = httpMock.expectOne(`${baseUrl}/stats/people`);
+    expect(req.request.method).toBe('GET');
+    req.flush(stats);
   });
 });
