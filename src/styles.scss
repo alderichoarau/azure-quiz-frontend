@@ -37,3 +37,7 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+.delete-btn {
+  --mat-icon-button-icon-color: var(--mat-sys-error);
+  --mat-icon-button-state-layer-color: var(--mat-sys-error);
+}
