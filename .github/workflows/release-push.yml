@@ -1,20 +1,29 @@
 # -----------------------------------------------------------------------------------------------
 # Fires when a release-prepare.yml PR (branch release/<tag>) merges into main: tags the release,
-# creates the GitHub release, then pushes it out by triggering both deploy tracks.
+# creates the GitHub release, then deploys to nonprod.
 #
-# Hardcoded to nonprod for now on purpose — same trust boundary as every other deploy workflow in
-# this repo (nonprod is self-service, prod isn't). Once a real release-to-prod process exists,
-# turn this into a `workflow_dispatch` choice input (nonprod/prod) instead of two fixed
-# `gh workflow run` calls below.
+# Also runnable manually (workflow_dispatch) for an already-tagged release, to deploy it to prod --
+# skips tagging/release creation, which only ever happens once, on the automatic PR-merge path.
 # -----------------------------------------------------------------------------------------------
 name: "Release - Publish"
-run-name: "${{ (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')) && format('Release - Publish from #{0}', github.event.pull_request.number) || format('Release - Skip: PR #{0} not a release merge', github.event.pull_request.number) }}"
+run-name: "${{ github.event_name == 'workflow_dispatch' && format('Release - Deploy {0} to {1}', inputs.tag, inputs.environment) || ((github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')) && format('Release - Publish from #{0}', github.event.pull_request.number) || format('Release - Skip: PR #{0} not a release merge', github.event.pull_request.number)) }}"
 
 on:
   pull_request:
     types: [closed]
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to deploy (e.g. v1.8.0) -- skips tagging/release creation"
+        required: true
+        type: string
+      environment:
+        description: "Which GitHub Environment to deploy this tag to"
+        required: true
+        type: environment
+        default: nonprod
 
 permissions:
   contents: write
@@ -22,22 +31,30 @@ permissions:
 
 jobs:
   push:
-    name: "Tag, release, and deploy to nonprod"
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+    name: "Tag, release, and deploy"
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/'))
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.pull_request.base.ref }}
 
-      - name: "Extract tag name from branch"
+      - name: "Resolve tag name and target environment"
         id: tag
-        run: echo "name=${GITHUB_HEAD_REF#release/}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+            echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${GITHUB_HEAD_REF#release/}" >> "$GITHUB_OUTPUT"
+            echo "environment=nonprod" >> "$GITHUB_OUTPUT"
+          fi
         env:
           GITHUB_HEAD_REF: ${{ github.event.pull_request.head.ref }}
 
       - name: "Create and push tag"
+        if: github.event_name != 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -45,6 +62,7 @@ jobs:
           git push origin "${{ steps.tag.outputs.name }}"
 
       - name: "Create GitHub release"
+        if: github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -52,20 +70,20 @@ jobs:
             --title "${{ steps.tag.outputs.name }}" \
             --generate-notes
 
-      - name: "Trigger AKS + Static Web App deploys (nonprod)"
+      - name: "Trigger AKS + Static Web App deploys"
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           # Releases created with GITHUB_TOKEN don't emit events that trigger
           # other workflows, so both deploy workflows are dispatched
           # explicitly here, pinned to this tag.
-          gh workflow run aks-deploy.yml --ref "${{ steps.tag.outputs.name }}" -f environment=nonprod
-          gh workflow run swa-deploy.yml --ref "${{ steps.tag.outputs.name }}" -f environment=nonprod
+          gh workflow run aks-deploy.yml --ref "${{ steps.tag.outputs.name }}" -f environment=${{ steps.tag.outputs.environment }}
+          gh workflow run swa-deploy.yml --ref "${{ steps.tag.outputs.name }}" -f environment=${{ steps.tag.outputs.environment }}
 
       - name: "Job summary"
         if: always()
         run: |
           echo "## Release pushed — ${{ steps.tag.outputs.name }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Tag** : ${{ steps.tag.outputs.name }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- **Deployed to** : nonprod (AKS + Static Web App)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Deployed to** : ${{ steps.tag.outputs.environment }} (AKS + Static Web App)" >> "$GITHUB_STEP_SUMMARY"
           echo "- **Actor** : @${{ github.actor }}" >> "$GITHUB_STEP_SUMMARY"
