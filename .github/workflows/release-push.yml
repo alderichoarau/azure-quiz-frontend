@@ -1,9 +1,11 @@
 # -----------------------------------------------------------------------------------------------
 # Fires when a release-prepare.yml PR (branch release/<tag>) merges into main: tags the release,
-# creates the GitHub release, then deploys to nonprod.
+# creates the GitHub release, then deploys to PROD -- the release process is this repo's prod
+# deployment gate. Nonprod isn't touched here: it's deployed directly and manually via
+# aks-deploy.yml/swa-deploy.yml (environment=nonprod), without going through a release.
 #
-# Also runnable manually (workflow_dispatch) for an already-tagged release, to deploy it to prod --
-# skips tagging/release creation, which only ever happens once, on the automatic PR-merge path.
+# Also runnable manually (workflow_dispatch) to redeploy an already-tagged release (e.g. retry a
+# failed prod run) -- skips tagging/release creation, which only ever happens once.
 # -----------------------------------------------------------------------------------------------
 name: "Release - Publish"
 run-name: "${{ github.event_name == 'workflow_dispatch' && format('Release - Deploy {0} to {1}', inputs.tag, inputs.environment) || ((github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')) && format('Release - Publish from #{0}', github.event.pull_request.number) || format('Release - Skip: PR #{0} not a release merge', github.event.pull_request.number)) }}"
@@ -48,7 +50,7 @@ jobs:
             echo "environment=${{ inputs.environment }}" >> "$GITHUB_OUTPUT"
           else
             echo "name=${GITHUB_HEAD_REF#release/}" >> "$GITHUB_OUTPUT"
-            echo "environment=nonprod" >> "$GITHUB_OUTPUT"
+            echo "environment=prod" >> "$GITHUB_OUTPUT"
           fi
         env:
           GITHUB_HEAD_REF: ${{ github.event.pull_request.head.ref }}
