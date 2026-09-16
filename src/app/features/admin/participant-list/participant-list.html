@@ -40,6 +40,7 @@
         <span class="person-name">{{ person.name }}</span>
         <button
           mat-icon-button
+          class="delete-btn"
           type="button"
           (click)="deletePerson(person)"
           [attr.aria-label]="'admin.people.delete' | translate"
