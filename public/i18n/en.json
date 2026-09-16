@@ -3,7 +3,8 @@
     "title": "Microsoft Certifications Revision"
   },
   "common": {
-    "loadError": "Something went wrong. Check your connection and try again."
+    "loadError": "Something went wrong. Check your connection and try again.",
+    "loading": "Loading"
   },
   "certifications": {
     "title": "Choose a certification",

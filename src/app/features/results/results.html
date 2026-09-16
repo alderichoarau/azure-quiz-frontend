@@ -1,6 +1,6 @@
 @if (loading()) {
   <div class="state-container">
-    <mat-spinner diameter="40" />
+    <mat-spinner diameter="40" [attr.aria-label]="'common.loading' | translate" />
   </div>
 } @else if (result(); as r) {
   <h1 class="page-title">{{ 'results.title' | translate }}</h1>

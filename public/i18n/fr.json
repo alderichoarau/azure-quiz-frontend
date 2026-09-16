@@ -3,7 +3,8 @@
     "title": "Révisions certifications Microsoft"
   },
   "common": {
-    "loadError": "Une erreur est survenue. Vérifiez votre connexion et réessayez."
+    "loadError": "Une erreur est survenue. Vérifiez votre connexion et réessayez.",
+    "loading": "Chargement en cours"
   },
   "certifications": {
     "title": "Choisissez une certification",

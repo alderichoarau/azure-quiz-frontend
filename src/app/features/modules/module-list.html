@@ -57,7 +57,7 @@
 
 @if (loading()) {
   <div class="state-container">
-    <mat-spinner diameter="40" />
+    <mat-spinner diameter="40" [attr.aria-label]="'common.loading' | translate" />
   </div>
 } @else if (loadError()) {
   <p class="error">{{ 'common.loadError' | translate }}</p>
