@@ -9,7 +9,7 @@
 # not just a new `helm upgrade`.
 # ─────────────────────────────────────────────────────────────────────────────
 name: AZ AKS - Deploy frontend application
-run-name: "Deploy frontend (AKS) · ${{ inputs.environment }} · @${{ github.actor }}"
+run-name: "Deploy frontend (AKS) · ${{ inputs.environment }}"
 
 on:
   workflow_dispatch:

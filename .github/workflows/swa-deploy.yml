@@ -8,7 +8,7 @@
 # Service living in the same Resource Group.
 # -----------------------------------------------------------------------------------------------
 name: AZ SWA - Deploy frontend application
-run-name: "Deploy frontend · ${{ inputs.environment }} · @${{ github.actor }}"
+run-name: "Deploy frontend · ${{ inputs.environment }}"
 
 on:
   workflow_dispatch:
