@@ -51,17 +51,8 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v7
 
-      - name: "Setup Node"
-        if: ${{ !inputs.target_url }}
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: package-lock.json
-
-      - name: "Install dependencies"
-        if: ${{ !inputs.target_url }}
-        run: npm ci
+      - if: ${{ !inputs.target_url }}
+        uses: alderichoarau/gha-actions/setup-node@setup-node-v1
 
       - name: "Build Angular app"
         if: ${{ !inputs.target_url }}

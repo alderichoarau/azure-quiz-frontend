@@ -32,26 +32,11 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Scan IaC for misconfigurations (trivy)"
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
         with:
           scan-type: fs
           scanners: misconfig
-          severity: HIGH,CRITICAL
-          exit-code: 1
-          hide-progress: true
-          output: trivy-iac.txt
-
-      - name: "Publish results to job summary"
-        if: always()
-        run: |
-          if [ -s trivy-iac.txt ]; then
-            {
-              echo "## 🛡️ Trivy — Dockerfile / Helm / nginx Misconfigurations"
-              echo '```'
-              cat trivy-iac.txt
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+          heading: "Dockerfile / Helm / nginx Misconfigurations"
 
   image-scan:
     name: "Trivy (built image CVEs)"
@@ -68,24 +53,9 @@ jobs:
             -t quiz-frontend:ci-scan .
 
       - name: "Scan image for known CVEs (trivy)"
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
         with:
           scan-type: image
           image-ref: quiz-frontend:ci-scan
           scanners: vuln
-          severity: HIGH,CRITICAL
-          exit-code: 1
-          hide-progress: true
-          output: trivy-image.txt
-
-      - name: "Publish results to job summary"
-        if: always()
-        run: |
-          if [ -s trivy-image.txt ]; then
-            {
-              echo "## 🛡️ Trivy — Built Image CVEs"
-              echo '```'
-              cat trivy-image.txt
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+          heading: "Built Image CVEs"
