@@ -52,7 +52,9 @@
     <h1>{{ 'admin.enterKeyTitle' | translate }}</h1>
     <p class="gate-hint">{{ 'admin.enterKeyHint' | translate }}</p>
     <form class="gate-form" (ngSubmit)="enter()">
+      <label for="adminKeyInput" class="visually-hidden">{{ 'admin.keyPlaceholder' | translate }}</label>
       <input
+        id="adminKeyInput"
         type="password"
         class="gate-input"
         [placeholder]="'admin.keyPlaceholder' | translate"

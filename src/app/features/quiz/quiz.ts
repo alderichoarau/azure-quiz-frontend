@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -32,7 +32,7 @@ import { InlineMarkdownPipe } from '@shared/pipes/inline-markdown.pipe';
   styleUrl: './quiz.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Quiz {
+export class Quiz implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly api = inject(QuizApiService);
@@ -53,7 +53,7 @@ export class Quiz {
   readonly currentIndexDisplay = computed(() => this.store.currentIndex() + 1);
   readonly totalQuestions = computed(() => this.session()?.questions.length ?? 0);
 
-  constructor() {
+  ngOnInit(): void {
     const certificationId = this.route.snapshot.paramMap.get('certificationId')!;
     const moduleId = this.route.snapshot.paramMap.get('moduleId');
 

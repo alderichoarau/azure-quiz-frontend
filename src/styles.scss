@@ -41,3 +41,18 @@ body {
   --mat-icon-button-icon-color: var(--mat-sys-error);
   --mat-icon-button-state-layer-color: var(--mat-sys-error);
 }
+
+// Screen-reader-only label text -- for inputs whose visible design has no
+// room for a label (icon-only rows, placeholder-only fields) but still need
+// one associated via `for`/`id` for accessibility (SonarCloud/axe "label" rule).
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

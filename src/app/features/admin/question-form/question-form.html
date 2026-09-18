@@ -69,7 +69,11 @@
           <div class="block-row">
             @if (block.type === 'TEXT') {
               <mat-icon class="block-icon">notes</mat-icon>
+              <label [for]="'blockText' + block.localId" class="visually-hidden">{{
+                'admin.questions.textPlaceholder' | translate
+              }}</label>
               <textarea
+                [id]="'blockText' + block.localId"
                 rows="2"
                 [(ngModel)]="block.text"
                 [name]="'blockText' + block.localId"
@@ -81,7 +85,15 @@
                 @if (block.imagePreviewUrl) {
                   <img [src]="block.imagePreviewUrl" class="thumb" alt="" />
                 }
-                <input type="file" accept="image/*" (change)="onImageSelected(block.localId, $event)" />
+                <label [for]="'blockImage' + block.localId" class="visually-hidden">{{
+                  'admin.questions.imageBlockLabel' | translate
+                }}</label>
+                <input
+                  [id]="'blockImage' + block.localId"
+                  type="file"
+                  accept="image/*"
+                  (change)="onImageSelected(block.localId, $event)"
+                />
               </div>
             }
             <button
@@ -112,20 +124,32 @@
         @for (option of options(); track option.localId) {
           <div class="option-row">
             @if (questionType() === 'MULTIPLE_CHOICE') {
+              <label [for]="'optionCorrect' + option.localId" class="visually-hidden">{{
+                'admin.questions.optionCorrectLabel' | translate
+              }}</label>
               <input
+                [id]="'optionCorrect' + option.localId"
                 type="checkbox"
                 [(ngModel)]="option.correct"
                 [name]="'optionCorrect' + option.localId"
               />
             } @else {
+              <label [for]="'optionCorrect' + option.localId" class="visually-hidden">{{
+                'admin.questions.optionCorrectLabel' | translate
+              }}</label>
               <input
+                [id]="'optionCorrect' + option.localId"
                 type="radio"
                 name="correctOption"
                 [checked]="option.correct"
                 (change)="setSingleCorrect(option.localId)"
               />
             }
+            <label [for]="'optionLabel' + option.localId" class="visually-hidden">{{
+              'admin.questions.optionPlaceholder' | translate
+            }}</label>
             <input
+              [id]="'optionLabel' + option.localId"
               type="text"
               [(ngModel)]="option.label"
               [name]="'optionLabel' + option.localId"
