@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Set up Node and install deps"
-        uses: alderichoarau/gha-actions/setup-node@setup-node-v1
+        uses: alderichoarau/gha-setup-node@v1
 
       - name: "Audit dependencies (high & critical)"
         shell: bash
@@ -61,7 +61,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Scan dependencies for known CVEs (trivy)"
-        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
+        uses: alderichoarau/gha-trivy-scan@v1
         with:
           scan-type: fs
           scanners: vuln
@@ -76,7 +76,7 @@ jobs:
 
       # exit-code "0" (informational only) -- no explicit allow/deny license policy yet.
       - name: "Scan dependency licenses (trivy)"
-        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
+        uses: alderichoarau/gha-trivy-scan@v1
         with:
           scan-type: fs
           scanners: license
@@ -92,25 +92,4 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Generate SBOM (trivy)"
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          format: cyclonedx
-          hide-progress: true
-          output: sbom.cdx.json
-
-      - name: "Upload SBOM artifact"
-        uses: actions/upload-artifact@v7
-        with:
-          name: sbom
-          path: sbom.cdx.json
-          retention-days: 90
-
-      - name: "Publish summary"
-        run: |
-          {
-            echo "## 📋 SBOM (CycloneDX)"
-            echo "- Components: $(jq '.components | length' sbom.cdx.json)"
-            echo "- Spec version: $(jq -r '.specVersion' sbom.cdx.json)"
-            echo "- Download the full SBOM from this run's **Summary** page, under **Artifacts** (\`sbom\`)."
-          } >> "$GITHUB_STEP_SUMMARY"
+        uses: alderichoarau/gha-generate-sbom@v1

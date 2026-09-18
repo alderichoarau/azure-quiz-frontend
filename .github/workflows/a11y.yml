@@ -40,28 +40,11 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Setup Node and install deps"
-        uses: alderichoarau/gha-actions/setup-node@setup-node-v1
+        uses: alderichoarau/gha-setup-node@v1
 
       - name: "Build Angular app"
         if: ${{ !inputs.target_url }}
         run: npm run build:prod
-
-      - name: "Setup Chrome"
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v2
-        with:
-          chrome-version: stable
-
-      # axe-core's bundled ChromeDriver isn't guaranteed to match whatever
-      # Chrome version setup-chrome installs, so fetch the exact matching
-      # build from the official Chrome for Testing distribution instead.
-      - name: "Install matching ChromeDriver"
-        run: |
-          CHROME_VERSION=$("${{ steps.setup-chrome.outputs.chrome-path }}" --version | grep -oE '[0-9.]+' | head -1)
-          echo "Chrome version: $CHROME_VERSION"
-          curl -fsSL "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip
-          unzip -o /tmp/chromedriver.zip -d /tmp
-          chmod +x /tmp/chromedriver-linux64/chromedriver
 
       - name: "Serve production build"
         if: ${{ !inputs.target_url }}
@@ -86,26 +69,6 @@ jobs:
           exit 1
 
       - name: "Run axe-core accessibility audit"
-        shell: bash
-        run: |
-          # axe-core/cli only adds --no-sandbox automatically when it launches
-          # its own auto-detected Chrome binary; since we pass --chrome-path
-          # ourselves, it's skipped, and headless Chrome refuses to start as
-          # root on the runner without it (SessionNotCreatedError: Chrome
-          # instance exited). disable-dev-shm-usage/disable-gpu avoid the
-          # usual /dev/shm and GPU-less-container crashes on top of that.
-          set +e
-          npx axe "${{ steps.target.outputs.url }}" \
-            --chrome-path "${{ steps.setup-chrome.outputs.chrome-path }}" \
-            --chromedriver-path "/tmp/chromedriver-linux64/chromedriver" \
-            --chrome-options="no-sandbox,disable-dev-shm-usage,disable-gpu" \
-            --exit 2>&1 | tee axe-report.txt
-          STATUS=${PIPESTATUS[0]}
-          set -e
-          {
-            echo "## ♿ Accessibility Audit (axe-core)"
-            echo '```'
-            cat axe-report.txt
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          exit $STATUS
+        uses: alderichoarau/gha-setup-chrome-axe@v1
+        with:
+          target-url: ${{ steps.target.outputs.url }}

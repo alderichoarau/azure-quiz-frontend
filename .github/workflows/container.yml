@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: "Scan IaC for misconfigurations (trivy)"
-        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
+        uses: alderichoarau/gha-trivy-scan@v1
         with:
           scan-type: fs
           scanners: misconfig
@@ -53,7 +53,7 @@ jobs:
             -t quiz-frontend:ci-scan .
 
       - name: "Scan image for known CVEs (trivy)"
-        uses: alderichoarau/gha-actions/trivy-scan@trivy-scan-v1
+        uses: alderichoarau/gha-trivy-scan@v1
         with:
           scan-type: image
           image-ref: quiz-frontend:ci-scan
