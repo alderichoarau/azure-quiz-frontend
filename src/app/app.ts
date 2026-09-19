@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { APP_VERSION } from './core/version';
+import { BackendAvailabilityStore } from './core/services/backend-availability.store';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,9 @@ import { APP_VERSION } from './core/version';
 export class App {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
+  private readonly backendAvailability = inject(BackendAvailabilityStore);
+
+  readonly backendAvailable = this.backendAvailability.available;
 
   // Regenerated from package.json at install time -- see
   // scripts/generate-version.mjs.

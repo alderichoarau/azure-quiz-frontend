@@ -48,6 +48,18 @@
   color: var(--mat-sys-on-primary);
 }
 
+.backend-offline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .content {
   max-width: 760px;
   margin: 0 auto;

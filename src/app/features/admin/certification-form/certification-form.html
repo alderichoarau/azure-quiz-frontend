@@ -23,7 +23,11 @@
   }
 
   <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
-    {{ 'admin.certifications.submit' | translate }}
+    @if (submitting()) {
+      <mat-spinner diameter="20" [attr.aria-label]="'common.loading' | translate" />
+    } @else {
+      {{ 'admin.certifications.submit' | translate }}
+    }
   </button>
 </form>
 

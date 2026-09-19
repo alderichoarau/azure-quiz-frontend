@@ -43,7 +43,11 @@
 
   <div class="form-actions">
     <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
-      {{ (editingModuleId() ? 'admin.modules.updateSubmit' : 'admin.modules.submit') | translate }}
+      @if (submitting()) {
+        <mat-spinner diameter="20" [attr.aria-label]="'common.loading' | translate" />
+      } @else {
+        {{ (editingModuleId() ? 'admin.modules.updateSubmit' : 'admin.modules.submit') | translate }}
+      }
     </button>
     @if (editingModuleId()) {
       <button mat-stroked-button type="button" (click)="cancelEdit()">

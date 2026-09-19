@@ -11,6 +11,13 @@
   </mat-toolbar>
 </header>
 
+@if (!backendAvailable()) {
+  <div class="backend-offline-banner">
+    <mat-icon>nights_stay</mat-icon>
+    <span>{{ 'app.backendOffline' | translate }}</span>
+  </div>
+}
+
 <main class="content" [class.content-wide]="isAdminRoute()">
   <router-outlet />
 </main>

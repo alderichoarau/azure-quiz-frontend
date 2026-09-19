@@ -78,7 +78,11 @@
       [disabled]="selectedOptionIds().length === 0 || submitting()"
       (click)="submit()"
     >
-      {{ 'quiz.submit' | translate }}
+      @if (submitting()) {
+        <mat-spinner diameter="20" [attr.aria-label]="'common.loading' | translate" />
+      } @else {
+        {{ 'quiz.submit' | translate }}
+      }
     </button>
     @if (submitError()) {
       <p class="error">{{ 'common.loadError' | translate }}</p>

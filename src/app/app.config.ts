@@ -11,6 +11,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { adminKeyInterceptor } from './core/interceptors/admin-key.interceptor';
 import { apiKeyInterceptor } from './core/interceptors/api-key.interceptor';
+import { backendAvailabilityInterceptor } from './core/interceptors/backend-availability.interceptor';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -18,7 +19,10 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([apiKeyInterceptor, adminKeyInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([apiKeyInterceptor, adminKeyInterceptor, backendAvailabilityInterceptor])
+    ),
     provideAnimationsAsync(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),

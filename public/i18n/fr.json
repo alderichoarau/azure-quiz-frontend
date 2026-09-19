@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "Révisions certifications Microsoft"
+    "title": "Révisions certifications Microsoft",
+    "backendOffline": "L'application est éteinte la nuit (environ 19h-5h) pour limiter les coûts d'hébergement. Elle revient automatiquement — réessaie demain matin."
   },
   "common": {
     "loadError": "Une erreur est survenue. Vérifiez votre connexion et réessayez.",

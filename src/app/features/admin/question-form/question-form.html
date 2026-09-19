@@ -182,7 +182,11 @@
       }
 
       <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
-        {{ (editingQuestionId ? 'admin.questions.updateSubmit' : 'admin.questions.submit') | translate }}
+        @if (submitting()) {
+          <mat-spinner diameter="20" [attr.aria-label]="'common.loading' | translate" />
+        } @else {
+          {{ (editingQuestionId ? 'admin.questions.updateSubmit' : 'admin.questions.submit') | translate }}
+        }
       </button>
     </form>
 
