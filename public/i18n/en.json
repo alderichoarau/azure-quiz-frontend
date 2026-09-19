@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Microsoft Certifications Revision",
-    "backendOffline": "The app is offline overnight (roughly 7 PM–5 AM Paris time) to save on hosting costs. It'll be back automatically — try again in the morning."
+    "backendOffline": "The app is offline overnight (roughly 7 PM–5 AM Paris time). It'll be back automatically — try again in the morning."
   },
   "common": {
     "loadError": "Something went wrong. Check your connection and try again.",
