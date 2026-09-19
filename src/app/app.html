@@ -9,14 +9,13 @@
     <button mat-button (click)="switchLang('fr')">FR</button>
     <button mat-button (click)="switchLang('en')">EN</button>
   </mat-toolbar>
+  @if (!backendAvailable()) {
+    <div class="backend-offline-banner" role="status">
+      <mat-icon>nights_stay</mat-icon>
+      <span>{{ 'app.backendOffline' | translate }}</span>
+    </div>
+  }
 </header>
-
-@if (!backendAvailable()) {
-  <div class="backend-offline-banner">
-    <mat-icon>nights_stay</mat-icon>
-    <span>{{ 'app.backendOffline' | translate }}</span>
-  </div>
-}
 
 <main class="content" [class.content-wide]="isAdminRoute()">
   <router-outlet />
