@@ -58,6 +58,10 @@
   color: var(--mat-sys-on-secondary-container);
   font-size: 0.9rem;
   text-align: center;
+
+  mat-icon {
+    flex-shrink: 0;
+  }
 }
 
 .content {
