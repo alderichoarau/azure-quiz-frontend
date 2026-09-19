@@ -96,6 +96,10 @@
   padding: 16px;
   margin: 0 0 20px;
 
+  mat-icon {
+    flex-shrink: 0;
+  }
+
   &.correct {
     background-color: #e6f4ea;
     color: #1e4620;
