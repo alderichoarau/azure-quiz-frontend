@@ -11,7 +11,11 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 ![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)
 ![Prettier](https://img.shields.io/badge/Prettier-3.9-F7B93E?logo=prettier&logoColor=black)
 
-## Last analysis
+## Analysis
+
+### GitHub
+
+**CI**
 
 [![CI · Build all](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/build-all.yml)
 [![Security · SAST (SonarCloud)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/sonar.yml)
@@ -20,12 +24,24 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 [![Security · Container & IaC](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/container.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/container.yml)
 [![Security · DAST (OWASP ZAP)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/dast.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/dast.yml)
 [![Accessibility · axe-core](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/a11y.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/a11y.yml)
+
+**Deploy**
+
 [![Deploy · Static Web Apps](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/swa-deploy.yml)
 [![Deploy · AKS](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+
+### Mirror
+
 [![GitLab CI](https://img.shields.io/gitlab/pipeline-status/alderichoarau%2Fazure-quiz-frontend?branch=main&label=GitLab%20CI&logo=gitlab)](https://gitlab.com/alderichoarau/azure-quiz-frontend/-/pipelines)
 [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/alderic-hoarau/azure-quiz-frontend/main?label=Bitbucket%20CI&logo=bitbucket)](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend/pipelines)
+
+### Sonar
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 
 ## Mirrors
 
@@ -35,9 +51,6 @@ GitHub is the source of truth. This repository is automatically push-mirrored (r
 - [Bitbucket](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend)
 
 Issues and pull requests should be opened on GitHub.
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 
 ## Stack
 
