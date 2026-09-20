@@ -1,10 +1,20 @@
 # -----------------------------------------------------------------------------------------------
-# CI only (no CD) -- mirrors the checks from .github/workflows/build-all.yml. Deployment (AKS/SWA)
-# stays on GitHub, driven only from the GitHub side; this pipeline just verifies the mirrored code
-# builds.
+# CI only (no CD) -- mirrors the checks from .github/workflows/build-all.yml and a11y.yml.
+# Deployment (AKS/SWA) stays on GitHub, driven only from the GitHub side; this pipeline just
+# verifies the mirrored code builds. SAST/Secret Detection are GitLab's free-tier native templates
+# (results as pipeline artifacts only, no Vulnerability Report/MR integration -- that needs
+# Ultimate). Dependency Scanning and DAST have no free-tier equivalent, so they're not replicated
+# here. The accessibility job only audits "/" (root route) for the same reason as GitHub's
+# a11y.yml: the other routes need a live backend this pipeline doesn't have.
 # -----------------------------------------------------------------------------------------------
 stages:
+  - test
   - build
+  - accessibility
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
 
 image: node:26
 
@@ -25,3 +35,20 @@ lint-test-build:
     - npm run lint
     - npm run test:coverage
     - npm run build
+
+accessibility:
+  stage: accessibility
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends chromium chromium-driver
+  script:
+    - npm ci
+    - npm run build:prod
+    - npx http-server dist/azure-quiz-frontend/browser -p 4200 --silent &
+    - |
+      for i in $(seq 1 30); do
+        curl -sf http://localhost:4200 > /dev/null && break
+        sleep 1
+      done
+    - npx --yes @axe-core/cli@4.13.0 http://localhost:4200
+      --chrome-path /usr/bin/chromium --chromedriver-path /usr/bin/chromedriver
+      --chrome-options="no-sandbox,disable-dev-shm-usage,disable-gpu" --exit
