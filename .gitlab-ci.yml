@@ -1,0 +1,27 @@
+# -----------------------------------------------------------------------------------------------
+# CI only (no CD) -- mirrors the checks from .github/workflows/build-all.yml. Deployment (AKS/SWA)
+# stays on GitHub, driven only from the GitHub side; this pipeline just verifies the mirrored code
+# builds.
+# -----------------------------------------------------------------------------------------------
+stages:
+  - build
+
+image: node:26
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+lint-test-build:
+  stage: build
+  script:
+    - npm ci
+    - npm run lint
+    - npm run test:coverage
+    - npm run build
