@@ -26,6 +26,15 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 [![GitLab CI](https://gitlab.com/alderichoarau/azure-quiz-frontend/badges/main/pipeline.svg)](https://gitlab.com/alderichoarau/azure-quiz-frontend/-/pipelines)
 [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/alderic-hoarau/azure-quiz-frontend/main)](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend/pipelines)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
+
+## Mirrors
+
+GitHub is the source of truth. This repository is automatically push-mirrored (read-only) to:
+
+- [GitLab](https://gitlab.com/alderichoarau/azure-quiz-frontend)
+- [Bitbucket](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend)
+
+Issues and pull requests should be opened on GitHub.
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
