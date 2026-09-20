@@ -24,7 +24,7 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 [![Deploy · AKS](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml/badge.svg)](https://github.com/alderichoarau/azure-quiz-frontend/actions/workflows/aks-deploy.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 [![GitLab CI](https://gitlab.com/alderichoarau/azure-quiz-frontend/badges/main/pipeline.svg)](https://gitlab.com/alderichoarau/azure-quiz-frontend/-/pipelines)
-[![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/alderic-hoarau/azure-quiz-frontend/main)](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend/pipelines)
+[![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/alderic-hoarau/azure-quiz-frontend/main?label=Bitbucket%20CI)](https://bitbucket.org/alderic-hoarau/azure-quiz-frontend/pipelines)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=alderichoarau_azure-quiz-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=alderichoarau_azure-quiz-frontend)
 
 ## Mirrors
