@@ -1,8 +1,10 @@
 # -----------------------------------------------------------------------------------------------
 # After anything merges into main, updates every other open PR branch with that new main (the
-# same thing the "Update branch" button in the PR UI does, just automatic). A PR with a conflict
-# is simply left alone -- the update-branch call fails for that one PR only, logged and skipped,
-# nothing here tries to resolve it or blocks the other PRs from being updated.
+# same thing the "Update branch" button in the PR UI does, just automatic). A PR with a real
+# conflict is left alone -- the update-branch call fails for that one PR only, and it gets a
+# comment flagging it for a manual rebase, rather than silently sitting stale with no one noticing.
+# The "already up to date" case (same failing HTTP status, different message) is not a conflict
+# and is not commented on.
 #
 # Dependabot PRs are skipped by the update-branch call above -- Dependabot manages and rebases its
 # own branches itself; having this also push commits onto them fights with that instead of
@@ -33,10 +35,14 @@ jobs:
           gh pr list --repo "$REPO" --state open --base main --json number,author \
             --jq '.[] | select((.author.login | contains("dependabot")) | not) | .number' | while IFS= read -r pr; do
             echo "PR #$pr: updating..."
-            if gh api -X PUT "repos/$REPO/pulls/$pr/update-branch" > /dev/null 2>&1; then
+            if RESPONSE=$(gh api -X PUT "repos/$REPO/pulls/$pr/update-branch" 2>&1); then
               echo "PR #$pr: updated"
+            elif echo "$RESPONSE" | grep -qi "no new commits"; then
+              echo "PR #$pr: already up to date"
             else
-              echo "PR #$pr: could not update (conflict or already up to date) -- skipping"
+              echo "PR #$pr: could not update -- likely a real conflict, flagging for manual rebase"
+              gh pr comment "$pr" --repo "$REPO" \
+                --body "⚠️ Impossible de mettre à jour automatiquement cette branche avec \`main\` (probable conflit) — un rebase manuel est nécessaire."
             fi
           done
 
