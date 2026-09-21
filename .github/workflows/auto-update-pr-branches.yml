@@ -31,7 +31,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh pr list --repo "$REPO" --state open --base main --json number,author \
-            --jq '.[] | select(.author.login != "dependabot[bot]") | .number' | while IFS= read -r pr; do
+            --jq '.[] | select((.author.login | contains("dependabot")) | not) | .number' | while IFS= read -r pr; do
             echo "PR #$pr: updating..."
             if gh api -X PUT "repos/$REPO/pulls/$pr/update-branch" > /dev/null 2>&1; then
               echo "PR #$pr: updated"
@@ -46,7 +46,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh pr list --repo "$REPO" --state open --base main --json number,author \
-            --jq '.[] | select(.author.login == "dependabot[bot]") | .number' | while IFS= read -r pr; do
+            --jq '.[] | select(.author.login | contains("dependabot")) | .number' | while IFS= read -r pr; do
             echo "PR #$pr: requesting @dependabot rebase"
             gh pr comment "$pr" --repo "$REPO" --body "@dependabot rebase"
           done
