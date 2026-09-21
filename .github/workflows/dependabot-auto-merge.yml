@@ -1,0 +1,40 @@
+# -----------------------------------------------------------------------------------------------
+# Auto-merges the grouped "patch-updates" npm PR Dependabot opens (dependabot.yml groups every
+# patch-level npm bump into one PR titled "... bump the patch-updates group ..."). Minor and major
+# groups, and the github-actions/docker groups, are NOT touched here -- those still need a human
+# look.
+#
+# main requires 1 code-owner-approving review (branch protection), and CODEOWNERS only lists
+# human accounts -- the default GITHUB_TOKEN (acting as github-actions[bot]) cannot satisfy that,
+# so the approval step uses GH_PAT_WORKFLOWS (a PAT already on a CODEOWNERS account). Merge itself
+# still only happens once every required status check is green -- `gh pr merge --auto` queues it,
+# it doesn't bypass any of them. Same pattern as azure-quiz-backend's workflow of the same name.
+# -----------------------------------------------------------------------------------------------
+name: "Dependabot - Auto-merge patch updates"
+run-name: "Dependabot auto-merge · ${{ github.event.pull_request.title }}"
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  auto-merge-patch:
+    if: >
+      github.actor == 'dependabot[bot]' &&
+      contains(github.event.pull_request.title, 'patch-updates group')
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Approve (code-owner PAT)"
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_WORKFLOWS }}
+        run: |
+          gh pr review "${{ github.event.pull_request.html_url }}" --approve -b "Auto-approved: grouped patch-only npm bump."
+
+      - name: "Enable auto-merge"
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_WORKFLOWS }}
+        run: gh pr merge "${{ github.event.pull_request.html_url }}" --auto --squash

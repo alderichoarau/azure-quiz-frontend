@@ -14,12 +14,17 @@ updates:
     labels:
       - "dependencies"
     groups:
-      # Minor/patch updates are usually safe, bundle them into one PR
-      minor-patch:
+      # Grouped by bump type rather than bundled together, so patch-only PRs can be
+      # auto-merged (see dependabot-auto-merge.yml) while minor/major still get a human look.
+      patch-updates:
+        update-types:
+          - "patch"
+      minor-updates:
         update-types:
           - "minor"
-          - "patch"
-      # Major updates can be breaking, keep them as individual PRs for review
+      major-updates:
+        update-types:
+          - "major"
 
   # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
