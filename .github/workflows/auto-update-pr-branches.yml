@@ -10,7 +10,7 @@
 # regardless of who posts it, so this achieves the same "keep it current with main" outcome
 # through Dependabot's own mechanism rather than the update-branch API.
 # -----------------------------------------------------------------------------------------------
-name: "Auto-update PR branches"
+name: "GitHub - Auto-update PR branches"
 run-name: "Auto-update PR branches after merge to main"
 
 on:
@@ -28,11 +28,12 @@ jobs:
       - name: "Update each open PR branch"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          gh pr list --state open --base main --json number,author \
+          gh pr list --repo "$REPO" --state open --base main --json number,author \
             --jq '.[] | select(.author.login != "dependabot[bot]") | .number' | while IFS= read -r pr; do
             echo "PR #$pr: updating..."
-            if gh api -X PUT "repos/${{ github.repository }}/pulls/$pr/update-branch" > /dev/null 2>&1; then
+            if gh api -X PUT "repos/$REPO/pulls/$pr/update-branch" > /dev/null 2>&1; then
               echo "PR #$pr: updated"
             else
               echo "PR #$pr: could not update (conflict or already up to date) -- skipping"
@@ -42,9 +43,10 @@ jobs:
       - name: "Rebase Dependabot PR branches"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          gh pr list --state open --base main --json number,author \
+          gh pr list --repo "$REPO" --state open --base main --json number,author \
             --jq '.[] | select(.author.login == "dependabot[bot]") | .number' | while IFS= read -r pr; do
             echo "PR #$pr: requesting @dependabot rebase"
-            gh pr comment "$pr" --body "@dependabot rebase"
+            gh pr comment "$pr" --repo "$REPO" --body "@dependabot rebase"
           done
