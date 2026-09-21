@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v7
 
       - if: ${{ !inputs.target_url }}
-        uses: alderichoarau/gha-setup-node@v1
+        uses: alderichoarau/gha-setup-node@v2
 
       - name: "Build Angular app"
         if: ${{ !inputs.target_url }}
