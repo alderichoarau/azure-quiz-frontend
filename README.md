@@ -68,6 +68,10 @@ npm install
 npm start   # http://localhost:4200, targets the API on localhost:8080 (see src/environments/environment.development.ts)
 ```
 
+A `Makefile` wraps the commands on this page (and testing/linting) as shorter targets — run
+`make help` for the full list (`make install`, `make run`, `make test`, `make check`...). It's a
+convenience on top of what's documented here, not a replacement for understanding it.
+
 ## Tests and quality
 
 ```bash
