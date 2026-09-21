@@ -1,0 +1,50 @@
+# -----------------------------------------------------------------------------------------------
+# After anything merges into main, updates every other open PR branch with that new main (the
+# same thing the "Update branch" button in the PR UI does, just automatic). A PR with a conflict
+# is simply left alone -- the update-branch call fails for that one PR only, logged and skipped,
+# nothing here tries to resolve it or blocks the other PRs from being updated.
+#
+# Dependabot PRs are skipped by the update-branch call above -- Dependabot manages and rebases its
+# own branches itself; having this also push commits onto them fights with that instead of
+# helping. Instead, they get a "@dependabot rebase" comment: Dependabot's own listener acts on it
+# regardless of who posts it, so this achieves the same "keep it current with main" outcome
+# through Dependabot's own mechanism rather than the update-branch API.
+# -----------------------------------------------------------------------------------------------
+name: "Auto-update PR branches"
+run-name: "Auto-update PR branches after merge to main"
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  update-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Update each open PR branch"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list --state open --base main --json number,author \
+            --jq '.[] | select(.author.login != "dependabot[bot]") | .number' | while IFS= read -r pr; do
+            echo "PR #$pr: updating..."
+            if gh api -X PUT "repos/${{ github.repository }}/pulls/$pr/update-branch" > /dev/null 2>&1; then
+              echo "PR #$pr: updated"
+            else
+              echo "PR #$pr: could not update (conflict or already up to date) -- skipping"
+            fi
+          done
+
+      - name: "Rebase Dependabot PR branches"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list --state open --base main --json number,author \
+            --jq '.[] | select(.author.login == "dependabot[bot]") | .number' | while IFS= read -r pr; do
+            echo "PR #$pr: requesting @dependabot rebase"
+            gh pr comment "$pr" --body "@dependabot rebase"
+          done
