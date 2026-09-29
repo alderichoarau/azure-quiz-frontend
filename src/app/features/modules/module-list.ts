@@ -105,7 +105,7 @@ export class ModuleList {
 
   private navigateToQuiz(request: CreateQuizSessionRequest): void {
     if (request.mode === 'MODULE') {
-      this.router.navigate([
+      void this.router.navigate([
         '/certifications',
         this.certificationId,
         'quiz',
@@ -113,7 +113,7 @@ export class ModuleList {
         request.moduleId,
       ]);
     } else {
-      this.router.navigate(['/certifications', this.certificationId, 'quiz', 'exam']);
+      void this.router.navigate(['/certifications', this.certificationId, 'quiz', 'exam']);
     }
   }
 }
