@@ -1,8 +1,15 @@
 # -----------------------------------------------------------------------------------------------
 # Auto-merges the grouped "patch-updates" npm PR Dependabot opens (dependabot.yml groups every
-# patch-level npm bump into one PR titled "... bump the patch-updates group ..."). Minor and major
-# groups, and the github-actions/docker groups, are NOT touched here -- those still need a human
-# look.
+# patch-level npm bump into one PR). Minor and major groups, and the github-actions/docker groups,
+# are NOT touched here -- those still need a human look.
+#
+# Which group a PR belongs to is read from dependabot/fetch-metadata's `dependency-group` output,
+# not the PR title: the title is free text anyone with write access (or, on a compromised
+# dependency, a crafted PR) could set to "... patch-updates group ..." to fool a title-based check
+# into approving+merging an unrelated PR with this workflow's PAT (Sonar flagged this: "Workflows
+# should not rely on forgeable GitHub context values to trust events"). fetch-metadata instead
+# parses the Dependabot-Group-Name trailer Dependabot itself writes into the commit -- only
+# reachable if the PR was actually opened by Dependabot, already covered by the actor check below.
 #
 # main requires 1 code-owner-approving review (branch protection), and CODEOWNERS only lists
 # human accounts -- the default GITHUB_TOKEN (acting as github-actions[bot]) cannot satisfy that,
@@ -23,18 +30,24 @@ permissions:
 
 jobs:
   auto-merge-patch:
-    if: >
-      github.actor == 'dependabot[bot]' &&
-      contains(github.event.pull_request.title, 'patch-updates group')
+    if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
+      - name: "Fetch Dependabot metadata"
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
       - name: "Approve (code-owner PAT)"
+        if: steps.metadata.outputs.dependency-group == 'patch-updates'
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_WORKFLOWS }}
         run: |
           gh pr review "${{ github.event.pull_request.html_url }}" --approve -b "Auto-approved: grouped patch-only npm bump."
 
       - name: "Enable auto-merge"
+        if: steps.metadata.outputs.dependency-group == 'patch-updates'
         env:
           GH_TOKEN: ${{ secrets.GH_PAT_WORKFLOWS }}
         run: gh pr merge "${{ github.event.pull_request.html_url }}" --auto --squash
