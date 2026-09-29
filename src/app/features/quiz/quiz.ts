@@ -133,7 +133,7 @@ export class Quiz implements OnInit {
     this.selectedOptionIds.set([]);
     if (this.isLastQuestion()) {
       const sessionId = this.session()!.sessionId;
-      this.router.navigate(['/results', sessionId]);
+      void this.router.navigate(['/results', sessionId]);
     } else {
       this.store.goToNextQuestion();
     }
