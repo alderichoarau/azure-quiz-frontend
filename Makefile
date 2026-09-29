@@ -7,9 +7,6 @@ help: ## Show this list of targets
 install: ## Install dependencies
 	npm ci
 
-run: ## Run the dev server (http://localhost:4200) -- needs the backend running separately
-	npm start
-
 build: ## Production build (dist/)
 	npm run build:prod
 
@@ -33,3 +30,4 @@ audit: ## npm audit (high severity and above)
 
 a11y: ## Run the axe-core accessibility check
 	npm run a11y
+
