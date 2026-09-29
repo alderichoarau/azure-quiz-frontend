@@ -73,7 +73,7 @@ export class Quiz implements OnInit {
     // rather than fail the create-session call with a missing personId.
     const personId = this.personStore.personId();
     if (!personId) {
-      this.router.navigate(['/certifications', certificationId]);
+      void this.router.navigate(['/certifications', certificationId]);
       return;
     }
 

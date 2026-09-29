@@ -10,10 +10,10 @@
     <button mat-button (click)="switchLang('en')">EN</button>
   </mat-toolbar>
   @if (!backendAvailable()) {
-    <div class="backend-offline-banner" role="status">
+    <output class="backend-offline-banner">
       <mat-icon>nights_stay</mat-icon>
       <span>{{ 'app.backendOffline' | translate }}</span>
-    </div>
+    </output>
   }
 </header>
 

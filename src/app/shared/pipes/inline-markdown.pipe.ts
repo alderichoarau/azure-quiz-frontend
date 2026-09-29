@@ -13,9 +13,9 @@ export class InlineMarkdownPipe implements PipeTransform {
       return '';
     }
     const escaped = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
     return escaped.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
   }
 }
