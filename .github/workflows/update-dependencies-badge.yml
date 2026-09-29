@@ -1,0 +1,42 @@
+# -----------------------------------------------------------------------------------------------
+# Refreshes the "dependencies" badge in README.md's date whenever a Dependabot PR merges into
+# main -- whether that's the patch group auto-merging on its own (dependabot-auto-merge.yml) or a
+# minor/major group merged by hand. Purely cosmetic: a quick "when was this last bumped" signal,
+# not a correctness check.
+# -----------------------------------------------------------------------------------------------
+name: "Update dependencies badge"
+run-name: "Update dependencies badge"
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  update-badge:
+    if: github.event.pull_request.merged == true && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout main"
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: "Update badge date in README.md"
+        run: |
+          TODAY=$(date -u +%Y--%m--%d)
+          sed -i -E "s#(<!-- deps-badge -->) !\[Dependencies\]\(https://img\.shields\.io/badge/dependencies-[^)]+\)#\1 ![Dependencies](https://img.shields.io/badge/dependencies-updated_${TODAY}-brightgreen)#" README.md
+
+      - name: "Commit and push"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet README.md; then
+            echo "Badge already up to date, nothing to commit."
+            exit 0
+          fi
+          git add README.md
+          git commit -m "chore: refresh dependencies badge"
+          git push origin main
