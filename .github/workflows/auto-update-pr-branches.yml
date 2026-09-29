@@ -48,7 +48,10 @@ jobs:
 
       - name: "Rebase Dependabot PR branches"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Dependabot ignores @dependabot commands posted via the default GITHUB_TOKEN (the
+          # github-actions[bot] actor) -- it only honors them from an actor with real push access,
+          # so this needs the same PAT dependabot-auto-merge.yml uses to approve/merge.
+          GH_TOKEN: ${{ secrets.GH_PAT_WORKFLOWS }}
           REPO: ${{ github.repository }}
         run: |
           gh pr list --repo "$REPO" --state open --base main --json number,author \
