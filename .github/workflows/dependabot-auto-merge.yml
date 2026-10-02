@@ -8,8 +8,13 @@
 # dependency, a crafted PR) could set to "... patch-updates group ..." to fool a title-based check
 # into approving+merging an unrelated PR with this workflow's PAT (Sonar flagged this: "Workflows
 # should not rely on forgeable GitHub context values to trust events"). fetch-metadata instead
-# parses the Dependabot-Group-Name trailer Dependabot itself writes into the commit -- only
-# reachable if the PR was actually opened by Dependabot, already covered by the actor check below.
+# parses the Dependabot-Group-Name trailer Dependabot itself writes into the commit.
+#
+# The job gate uses the PR *author* (github.event.pull_request.user.login), not github.actor: on
+# pull_request_target, github.actor is only "the last identity to act on the PR", and an attacker
+# can make it dependabot[bot] on a PR from their own fork by commenting to get Dependabot to
+# force-push (Synacktiv, "GitHub Actions exploitation: Dependabot"). The PR author can't be forged,
+# and with this workflow's PAT that would otherwise mean a CODEOWNER approval + auto-merge.
 #
 # main requires 1 code-owner-approving review (branch protection), and CODEOWNERS only lists
 # human accounts -- the default GITHUB_TOKEN (acting as github-actions[bot]) cannot satisfy that,
@@ -30,7 +35,7 @@ permissions:
 
 jobs:
   auto-merge-patch:
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: "Fetch Dependabot metadata"
