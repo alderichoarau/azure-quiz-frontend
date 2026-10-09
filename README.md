@@ -7,7 +7,7 @@ module or mock exam, accessible from a simple link (no account). Consumes the RE
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![Angular Material](https://img.shields.io/badge/Angular_Material-22-757575?logo=materialdesign&logoColor=white)
-![Vitest](https://img.shields.io/badge/Vitest-4.1-6E9F18?logo=vitest&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-5.x-6E9F18?logo=vitest&logoColor=white)
 ![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)
 ![Prettier](https://img.shields.io/badge/Prettier-3.9-F7B93E?logo=prettier&logoColor=black)
 <!-- deps-badge --> ![Dependencies](https://img.shields.io/badge/dependencies-not_yet_updated-lightgrey)
